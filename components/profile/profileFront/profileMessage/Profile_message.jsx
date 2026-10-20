@@ -16,6 +16,9 @@ const Profile_message = () => {
     increaseUnreadCount,
     setIsMatching,
     setIsMatchBox,
+    setIsEditpage,
+    setIsProfilepage
+    
   } = useContext(MyContext);
 
   const [users, setUsers] = useState([]);
@@ -97,6 +100,8 @@ const Profile_message = () => {
     // Set matching to false
     setIsMatching(false);
     setIsMatchBox(false);
+    setIsEditpage(false);
+    setIsProfilepage(false);
 
     // Unread count will be cleared by your context / chat logic
     // clearUnreadCount(userId);

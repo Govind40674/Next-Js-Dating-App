@@ -8,12 +8,14 @@ import {useContext} from "react";
 import {MyContext} from "../myContext/MyContext";
 import PrivateMessage from "../message/PrivateMessage";
 import OtherProfile from "../otherProfile/OtherProfile";
+import ProfileCmpln from "../profileCmpln/ProfileCmpln";
+
 
 // import PrivateMessage from "../private-message/PrivateMessage";
 
 
 const Matching = () => {
-  const {isMessageBox, messageUserId,isMatchBox, matchUserId} = useContext(MyContext);
+  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditPage} = useContext(MyContext);
   if(isMessageBox) {
     
      return <PrivateMessage messageUserId={messageUserId}/>
@@ -21,6 +23,9 @@ const Matching = () => {
 
   if(isMatchBox) {
     return <OtherProfile matchUserId={matchUserId}/>;
+  }
+  if(isEditPage){
+    return <ProfileCmpln/>
   }
 
   return <Matching_profile />;

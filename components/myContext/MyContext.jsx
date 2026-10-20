@@ -35,6 +35,11 @@ export const MyContextProvider = ({ children }) => {
   const [isMatching, setIsMatching] = useState(true);
   // const [matchingUserId, setMatchingUserId] = useState(null);
 
+
+  const [isEditpage, setIsEditpage] = useState(false);
+
+  const [isProfilepage, setIsProfilepage] = useState(false);
+
   // =====================================================
   // ACTIVE CHAT USER
   // =====================================================
@@ -427,6 +432,15 @@ export const MyContextProvider = ({ children }) => {
 
         messageUserId,
         setMessageUserId,
+
+        // =================================================
+        // OTHER PROFILE
+        // =================================================
+        isEditpage,
+        setIsEditpage,
+
+        isProfilepage,
+        setIsProfilepage,
 
 
       //Private match

@@ -3,9 +3,19 @@ import styles from './ProfileBack.module.css'
 import { Button } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { setOnlineStatus } from "@/lib/presence";
+import { MyContext } from '../../myContext/MyContext';
+import { useContext } from 'react';
 
 const ProfileBack = () => {
   const router = useRouter()
+  const {
+  
+  setIsMessageBox,
+  setIsMatchBox,
+  setIsMatching,
+  setIsEditpage,
+  setIsProfilepage
+  } = useContext(MyContext);
 
   const handleLogout =async  () => {
     await setOnlineStatus(false);
@@ -13,8 +23,13 @@ const ProfileBack = () => {
     router.push('/login')
   }
   const handleEditProfile = () => {
+    setIsMessageBox(false);
+    setIsMatchBox(false);
+    setIsMatching(false);
+    setIsEditpage(true);
+    setIsProfilepage(false);
 
-    router.push('/Edit-profile')
+  
   }
 
   return (
