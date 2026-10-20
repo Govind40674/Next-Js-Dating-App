@@ -6,79 +6,61 @@ import User from "@/models/User";
 import cloudinary from "@/lib/cloudinary";
 
 const MAX_PHOTOS = 6;
-const MIN_PHOTOS = 3;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-const allowedGenders = [
-  "Male",
-  "Female",
-  "Other",
-];
-
-const allowedGenderPreferences = [
-  "Male",
-  "Female",
-  "All",
-];
-
-const allowedDatingIntents = [
+const ALLOWED_GENDERS = ["Male", "Female", "Other"];
+const ALLOWED_GENDER_PREFERENCES = ["Male", "Female", "All"];
+const ALLOWED_DATING_INTENTS = [
   "Serious Relationship",
   "Casual Dating",
   "Friendship",
   "Marriage",
   "Not Sure Yet",
 ];
-
-const allowedRelationshipStatuses = [
+const ALLOWED_RELATIONSHIP_STATUSES = [
   "Single",
   "Divorced",
   "Widowed",
   "Prefer Not to Say",
 ];
-
-const allowedCommunicationStyles = [
+const ALLOWED_COMMUNICATION_STYLES = [
   "Texting",
   "Calling",
   "Video Calling",
   "In Person",
   "All",
 ];
-
-const allowedExerciseValues = [
+const ALLOWED_EXERCISE = [
   "Frequently",
   "Sometimes",
   "Rarely",
   "Never",
   "Prefer Not to Say",
 ];
+const ALLOWED_LIFESTYLE = ["Yes", "No", "Sometimes", "Prefer Not to Say"];
 
-const allowedLifestyleValues = [
-  "Yes",
-  "No",
-  "Sometimes",
-  "Prefer Not to Say",
+const arrayFieldMappings = [
+  { field: "interest", formKey: "interests" },
+  { field: "hobbies", formKey: "hobbies" },
+  { field: "favoriteMusic", formKey: "favoriteMusic" },
+  { field: "favoriteMovies", formKey: "favoriteMovies" },
+  { field: "favoriteBooks", formKey: "favoriteBooks" },
+  { field: "favoriteActivities", formKey: "favoriteActivities" },
+  { field: "personalityTraits", formKey: "personalityTraits" },
+  { field: "loveLanguage", formKey: "loveLanguage" },
+  { field: "languages", formKey: "languages" },
+  { field: "pets", formKey: "pets" },
 ];
 
 function readText(formData, key) {
   const value = formData.get(key);
-
-  return typeof value === "string"
-    ? value.trim()
-    : "";
+  return typeof value === "string" ? value.trim() : "";
 }
 
 function readNumber(formData, key, fallback = null) {
   const rawValue = readText(formData, key);
-
-  if (rawValue === "") {
-    return fallback;
-  }
-
+  if (rawValue === "") return fallback;
   const value = Number(rawValue);
-
-  return Number.isFinite(value)
-    ? value
-    : fallback;
+  return Number.isFinite(value) ? value : fallback;
 }
 
 function readStringArray(formData, key) {
@@ -89,256 +71,237 @@ function readStringArray(formData, key) {
     .filter(Boolean);
 }
 
-function isValidIndex(value) {
+function isValidSlot(value) {
   const index = Number(value);
-
-  return (
-    Number.isInteger(index) &&
-    index >= 0 &&
-    index < MAX_PHOTOS
-  );
+  return Number.isInteger(index) && index >= 0 && index < MAX_PHOTOS;
 }
 
-function findEmptySlot(pictures) {
-  return pictures.findIndex((picture) => !picture);
+function calculateAge(dateOfBirth, now = new Date()) {
+  let age = now.getUTCFullYear() - dateOfBirth.getUTCFullYear();
+  const monthDifference = now.getUTCMonth() - dateOfBirth.getUTCMonth();
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && now.getUTCDate() < dateOfBirth.getUTCDate())
+  )
+    age -= 1;
+  return age;
+}
+
+function parseDateOfBirth(rawValue) {
+  if (!rawValue) return null;
+  // The date input sends YYYY-MM-DD. Parse at UTC midnight to avoid timezone date shifts.
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(rawValue)
+    ? new Date(`${rawValue}T00:00:00.000Z`)
+    : new Date(rawValue);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
 }
 
 function uploadImageToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: "dating-app/profile-images",
-        resource_type: "image",
-      },
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "dating-app/profile-images", resource_type: "image" },
       (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        if (!result?.secure_url) {
-          reject(new Error("Cloudinary upload failed."));
-          return;
-        }
-
+        if (error) return reject(error);
+        if (!result?.secure_url)
+          return reject(new Error("Cloudinary upload failed."));
         resolve(result);
-      }
+      },
     );
-
-    uploadStream.end(buffer);
+    stream.end(buffer);
   });
 }
 
-const arrayFieldMappings = [
-  { field: "interest", formKey: "interests" },
-  { field: "hobbies", formKey: "hobbies" },
-  { field: "favoriteMusic", formKey: "favoriteMusic" },
-  { field: "favoriteMovies", formKey: "favoriteMovies" },
-  { field: "favoriteBooks", formKey: "favoriteBooks" },
-  {
-    field: "favoriteActivities",
-    formKey: "favoriteActivities",
-  },
-  {
-    field: "personalityTraits",
-    formKey: "personalityTraits",
-  },
-  { field: "loveLanguage", formKey: "loveLanguage" },
-  { field: "languages", formKey: "languages" },
-  { field: "pets", formKey: "pets" },
-];
+function calculateProfileProgress(user) {
+  const hasWorkAndLocation = Boolean(
+    user.profession ||
+    user.education ||
+    user.city ||
+    user.state ||
+    user.country,
+  );
+  const hasInterests = [
+    user.interest,
+    user.hobbies,
+    user.favoriteMusic,
+    user.favoriteMovies,
+    user.favoriteBooks,
+    user.favoriteActivities,
+  ].some((items) => items?.length);
+  const hasDatingPreferences =
+    user.datingIntent !== "Not Sure Yet" ||
+    user.relationshipStatus !== "Prefer Not to Say" ||
+    user.minAgePreference !== 18 ||
+    user.maxAgePreference !== 99 ||
+    user.maxDistanceKm !== 50;
+  const hasPersonality = Boolean(
+    user.personalityTraits?.length ||
+    user.loveLanguage?.length ||
+    user.languages?.length ||
+    (user.communicationStyle && user.communicationStyle !== "All"),
+  );
+  const hasLifestyle = Boolean(
+    user.height != null ||
+    user.pets?.length ||
+    user.religion ||
+    user.exercise !== "Prefer Not to Say" ||
+    user.smoking !== "Prefer Not to Say" ||
+    user.drinking !== "Prefer Not to Say",
+  );
+  const checks = [
+    Boolean(
+      user.name &&
+      user.dateOfBirth &&
+      user.age >= 18 &&
+      user.gender &&
+      user.genderLike &&
+      user.bio,
+    ),
+    hasWorkAndLocation,
+    hasInterests,
+    hasDatingPreferences,
+    hasPersonality,
+    hasLifestyle,
+    Boolean(user.photo?.some(Boolean)),
+  ];
+  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+}
 
 export async function POST(request) {
   try {
     await connectDB();
-
     const formData = await request.formData();
     const userId = readText(formData, "userId");
 
-    if (!userId) {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "User ID is required.",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid user ID.",
-        },
-        { status: 400 }
+        { success: false, message: "A valid user ID is required." },
+        { status: 400 },
       );
     }
 
     const user = await User.findById(userId);
-
-    if (!user) {
+    if (!user)
       return NextResponse.json(
-        {
-          success: false,
-          message: "User not found.",
-        },
-        { status: 404 }
+        { success: false, message: "User not found." },
+        { status: 404 },
       );
-    }
 
-    // ==================== REQUIRED PROFILE FIELDS ====================
-
+    // Only Basic Info is required to save/complete onboarding. Every other field is optional.
     const name = readText(formData, "name");
     const bio = readText(formData, "bio");
-    const profession = readText(formData, "profession");
-    const education = readText(formData, "education");
-    const city = readText(formData, "city");
-    const country = readText(formData, "country");
     const gender = readText(formData, "gender");
     const genderLike = readText(formData, "genderLike");
-    const age = readNumber(formData, "age");
+    const dateOfBirthRaw = readText(formData, "dateOfBirth");
+    const dateOfBirth = parseDateOfBirth(dateOfBirthRaw);
 
-    if (
-      !name ||
-      !bio ||
-      !profession ||
-      !education ||
-      !city ||
-      !country ||
-      !gender ||
-      !genderLike
-    ) {
+    if (!name || !bio || !gender || !genderLike || !dateOfBirth) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please complete all required profile fields.",
+          message:
+            "Please complete all required Basic Info fields, including date of birth.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
-    if (
-      !Number.isInteger(age) ||
-      age < 18 ||
-      age > 120
-    ) {
+    if (bio.length > 500)
       return NextResponse.json(
-        {
-          success: false,
-          message: "Age must be a valid number of at least 18.",
-        },
-        { status: 400 }
+        { success: false, message: "Bio cannot exceed 500 characters." },
+        { status: 400 },
       );
-    }
-
-    if (!allowedGenders.includes(gender)) {
+    if (dateOfBirth > new Date())
       return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid gender selected.",
-        },
-        { status: 400 }
+        { success: false, message: "Date of birth cannot be in the future." },
+        { status: 400 },
       );
-    }
-
-    if (!allowedGenderPreferences.includes(genderLike)) {
+    const age = calculateAge(dateOfBirth);
+    if (age < 18 || age > 120)
       return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid gender preference selected.",
-        },
-        { status: 400 }
+        { success: false, message: "You must be at least 18 years old." },
+        { status: 400 },
       );
-    }
-
-    // ==================== SAVE BASIC PROFILE ====================
+    if (!ALLOWED_GENDERS.includes(gender))
+      return NextResponse.json(
+        { success: false, message: "Invalid gender selected." },
+        { status: 400 },
+      );
+    if (!ALLOWED_GENDER_PREFERENCES.includes(genderLike))
+      return NextResponse.json(
+        { success: false, message: "Invalid interested-in preference." },
+        { status: 400 },
+      );
 
     user.name = name;
-    user.age = age;
+    user.bio = bio;
     user.gender = gender;
     user.genderLike = genderLike;
-    user.bio = bio;
-    user.profession = profession;
-    user.education = education;
-    user.city = city;
-    user.state = readText(formData, "state");
-    user.country = country;
+    user.dateOfBirth = dateOfBirth;
+    user.age = age; // Keep the existing age field in sync with dateOfBirth.
 
-    // ==================== INTEREST AND OTHER ARRAYS ====================
+    // Optional text fields: empty values are allowed and clear previous values.
+    for (const field of [
+      "profession",
+      "education",
+      "city",
+      "state",
+      "country",
+      "religion",
+    ]) {
+      if (formData.has(field)) user[field] = readText(formData, field);
+    }
 
+    // Optional arrays can be explicitly cleared using the Included marker.
     for (const { field, formKey } of arrayFieldMappings) {
-      const wasProvided =
-        formData.has(`${field}Included`) ||
-        formData.has(formKey);
-
-      if (wasProvided) {
+      if (formData.has(`${field}Included`) || formData.has(formKey)) {
         user[field] = readStringArray(formData, formKey);
       }
     }
 
-    if (!user.interest?.length) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Please select at least one interest.",
-        },
-        { status: 400 }
-      );
+    if (formData.has("datingIntent")) {
+      const value = readText(formData, "datingIntent") || "Not Sure Yet";
+      if (!ALLOWED_DATING_INTENTS.includes(value))
+        return NextResponse.json(
+          { success: false, message: "Invalid dating preference." },
+          { status: 400 },
+        );
+      user.datingIntent = value;
     }
-
-    // ==================== DATING PREFERENCES ====================
-
-    const datingIntent =
-      readText(formData, "datingIntent") ||
-      "Not Sure Yet";
-
-    if (!allowedDatingIntents.includes(datingIntent)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid dating preference.",
-        },
-        { status: 400 }
-      );
+    if (formData.has("relationshipStatus")) {
+      const value =
+        readText(formData, "relationshipStatus") || "Prefer Not to Say";
+      if (!ALLOWED_RELATIONSHIP_STATUSES.includes(value))
+        return NextResponse.json(
+          { success: false, message: "Invalid relationship status." },
+          { status: 400 },
+        );
+      user.relationshipStatus = value;
     }
-
-    const relationshipStatus =
-      readText(formData, "relationshipStatus") ||
-      "Prefer Not to Say";
-
-    if (
-      !allowedRelationshipStatuses.includes(
-        relationshipStatus
-      )
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid relationship status.",
-        },
-        { status: 400 }
-      );
+    if (formData.has("communicationStyle")) {
+      const value = readText(formData, "communicationStyle") || "All";
+      if (!ALLOWED_COMMUNICATION_STYLES.includes(value))
+        return NextResponse.json(
+          { success: false, message: "Invalid communication preference." },
+          { status: 400 },
+        );
+      user.communicationStyle = value;
     }
 
     const minAgePreference = readNumber(
       formData,
       "minAgePreference",
-      18
+      user.minAgePreference ?? 18,
     );
-
     const maxAgePreference = readNumber(
       formData,
       "maxAgePreference",
-      99
+      user.maxAgePreference ?? 99,
     );
-
     const maxDistanceKm = readNumber(
       formData,
       "maxDistanceKm",
-      50
+      user.maxDistanceKm ?? 50,
     );
-
     if (
       !Number.isInteger(minAgePreference) ||
       !Number.isInteger(maxAgePreference) ||
@@ -349,13 +312,11 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Please enter a valid preferred age range.",
+          message: "Please enter a valid preferred age range.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
     if (
       !Number.isFinite(maxDistanceKm) ||
       maxDistanceKm < 1 ||
@@ -364,294 +325,139 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Please enter a valid maximum distance.",
+          message:
+            "Please enter a valid maximum distance between 1 and 500 km.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
-    user.datingIntent = datingIntent;
-    user.relationshipStatus = relationshipStatus;
     user.minAgePreference = minAgePreference;
     user.maxAgePreference = maxAgePreference;
     user.maxDistanceKm = maxDistanceKm;
 
-    // ==================== COMMUNICATION ====================
-
-    const communicationStyle =
-      readText(formData, "communicationStyle") || "All";
-
+    const exercise = readText(formData, "exercise") || "Prefer Not to Say";
+    const smoking = readText(formData, "smoking") || "Prefer Not to Say";
+    const drinking = readText(formData, "drinking") || "Prefer Not to Say";
     if (
-      !allowedCommunicationStyles.includes(
-        communicationStyle
-      )
+      !ALLOWED_EXERCISE.includes(exercise) ||
+      !ALLOWED_LIFESTYLE.includes(smoking) ||
+      !ALLOWED_LIFESTYLE.includes(drinking)
     ) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid communication preference.",
-        },
-        { status: 400 }
+        { success: false, message: "Invalid lifestyle selection." },
+        { status: 400 },
       );
     }
-
-    user.communicationStyle = communicationStyle;
-
-    // ==================== LIFESTYLE ====================
-
-    const exercise =
-      readText(formData, "exercise") ||
-      "Prefer Not to Say";
-
-    const smoking =
-      readText(formData, "smoking") ||
-      "Prefer Not to Say";
-
-    const drinking =
-      readText(formData, "drinking") ||
-      "Prefer Not to Say";
-
-    if (!allowedExerciseValues.includes(exercise)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid exercise preference.",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (
-      !allowedLifestyleValues.includes(smoking) ||
-      !allowedLifestyleValues.includes(drinking)
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid lifestyle selection.",
-        },
-        { status: 400 }
-      );
-    }
-
     user.exercise = exercise;
     user.smoking = smoking;
     user.drinking = drinking;
 
     const height = readNumber(formData, "height", null);
-
-    if (
-      height !== null &&
-      (height < 0 || height > 300)
-    ) {
+    if (height !== null && (height < 0 || height > 300))
       return NextResponse.json(
-        {
-          success: false,
-          message: "Please enter a valid height.",
-        },
-        { status: 400 }
+        { success: false, message: "Please enter a valid height." },
+        { status: 400 },
       );
-    }
-
     user.height = height;
-    user.religion = readText(formData, "religion");
 
-    // ==================== PHOTO SLOT PREPARATION ====================
-
-    const hasPhotoPayload = [
-      "images",
-      "imageIndexes",
-      "existingImages",
-      "existingImageIndexes",
-    ].some((key) => formData.has(key));
-
-    let pictures = hasPhotoPayload
-      ? Array(MAX_PHOTOS).fill(null)
-      : Array.from(
-          { length: MAX_PHOTOS },
-          (_, index) => user.photo?.[index] || null
-        );
-
-    // Retain existing Cloudinary URLs at their submitted indexes.
-    const existingImages =
-      formData.getAll("existingImages");
-
-    const existingImageIndexes =
-      formData.getAll("existingImageIndexes");
-
-    for (
-      let i = 0;
-      i < existingImages.length;
-      i++
-    ) {
-      const url = existingImages[i];
-      const submittedIndex =
-        existingImageIndexes[i];
-
-      if (typeof url !== "string" || !url.trim()) {
-        continue;
+    // Photos are optional. If a photo payload is sent, rebuild the six slots in submitted order.
+    // Only URLs already attached to this account are accepted as existing photos.
+    const hasPhotoPayload =
+      formData.has("photosIncluded") ||
+      formData.has("images") ||
+      formData.has("existingImages");
+    if (hasPhotoPayload) {
+      const pictures = Array(MAX_PHOTOS).fill(null);
+      const existingImages = formData.getAll("existingImages");
+      const existingIndexes = formData.getAll("existingImageIndexes");
+      for (let index = 0; index < existingImages.length; index += 1) {
+        const url = existingImages[index];
+        const slot = existingIndexes[index];
+        if (typeof url !== "string" || !isValidSlot(slot)) continue;
+        const safeUrl = url.trim();
+        if (user.photo?.includes(safeUrl)) pictures[Number(slot)] = safeUrl;
       }
 
-      if (isValidIndex(submittedIndex)) {
-        pictures[Number(submittedIndex)] = url.trim();
-      } else {
-        const emptySlot = findEmptySlot(pictures);
+      const images = formData.getAll("images");
+      const imageIndexes = formData.getAll("imageIndexes");
+      for (let index = 0; index < images.length; index += 1) {
+        const file = images[index];
+        if (
+          !file ||
+          typeof file === "string" ||
+          typeof file.arrayBuffer !== "function"
+        )
+          continue;
+        if (!file.type?.startsWith("image/"))
+          return NextResponse.json(
+            { success: false, message: "Only image files are allowed." },
+            { status: 400 },
+          );
+        if (file.size > MAX_FILE_SIZE)
+          return NextResponse.json(
+            {
+              success: false,
+              message: "Each image must be smaller than 5 MB.",
+            },
+            { status: 400 },
+          );
 
-        if (emptySlot !== -1) {
-          pictures[emptySlot] = url.trim();
-        }
+        const slotRaw = imageIndexes[index];
+        const slot = isValidSlot(slotRaw)
+          ? Number(slotRaw)
+          : pictures.findIndex((item) => !item);
+        if (slot < 0 || slot >= MAX_PHOTOS)
+          return NextResponse.json(
+            {
+              success: false,
+              message: "Maximum six profile photos are allowed.",
+            },
+            { status: 400 },
+          );
+        const bytes = await file.arrayBuffer();
+        const uploaded = await uploadImageToCloudinary(Buffer.from(bytes));
+        pictures[slot] = uploaded.secure_url;
       }
+      user.photo = pictures.filter(Boolean);
     }
 
-    // ==================== NEW IMAGE UPLOADS ====================
-
-    const images = formData.getAll("images");
-    const imageIndexes = formData.getAll("imageIndexes");
-
-    for (let i = 0; i < images.length; i++) {
-      const file = images[i];
-
-      if (
-        !file ||
-        typeof file === "string" ||
-        typeof file.arrayBuffer !== "function"
-      ) {
-        continue;
-      }
-
-      if (!file.type?.startsWith("image/")) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Only image files are allowed.",
-          },
-          { status: 400 }
-        );
-      }
-
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Each image must be smaller than 5MB.",
-          },
-          { status: 400 }
-        );
-      }
-
-      const submittedIndex = imageIndexes[i];
-
-      let uploadIndex;
-
-      if (isValidIndex(submittedIndex)) {
-        uploadIndex = Number(submittedIndex);
-      } else {
-        uploadIndex = findEmptySlot(pictures);
-      }
-
-      if (
-        uploadIndex === -1 ||
-        uploadIndex === undefined
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            message:
-              "Maximum 6 profile photos are allowed.",
-          },
-          { status: 400 }
-        );
-      }
-
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uploadResult =
-        await uploadImageToCloudinary(buffer);
-
-      // Replacing this index also handles replacing an existing photo.
-      pictures[uploadIndex] = uploadResult.secure_url;
-    }
-
-    pictures = pictures.slice(0, MAX_PHOTOS);
-
-    const finalPhotoCount = pictures.filter(Boolean).length;
-
-    if (finalPhotoCount < MIN_PHOTOS) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "At least 3 profile photos are required.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // ==================== PROFILE COMPLETION ====================
-
-    user.photo = pictures;
-
-    const completionChecks = [
-      Boolean(user.name),
-      Number(user.age) >= 18,
-      Boolean(user.gender),
-      Boolean(user.genderLike),
-      Boolean(user.bio),
-      Boolean(user.profession),
-      Boolean(user.education),
-      Boolean(user.city),
-      Boolean(user.country),
-      Boolean(user.interest?.length),
-      finalPhotoCount >= MIN_PHOTOS,
-    ];
-
-    const completedFields =
-      completionChecks.filter(Boolean).length;
-
-    user.profileCompletionPercentage = Math.round(
-      (completedFields / completionChecks.length) * 100
+    // Completion means Basic Info is completed, not that every optional section is filled.
+    user.isProfileComplete = Boolean(
+      user.name &&
+      user.dateOfBirth &&
+      user.age >= 18 &&
+      user.gender &&
+      user.genderLike &&
+      user.bio,
     );
-
-    user.isProfileComplete = completionChecks.every(Boolean);
+    user.profileCompletionPercentage = calculateProfileProgress(user);
     user.lastActive = new Date();
 
-    // ==================== SAVE USER ====================
-
     await user.save();
-
-    // Never send password or push-token values in this response.
     const safeUser = user.toObject();
-
     delete safeUser.password;
     delete safeUser.fcmToken;
     delete safeUser.googleId;
 
     return NextResponse.json({
       success: true,
-      message: "Profile updated successfully.",
+      message: "Profile saved successfully.",
       user: safeUser,
     });
   } catch (error) {
     console.error("PROFILE UPDATE API ERROR:", error);
-
     if (error?.name === "ValidationError") {
       return NextResponse.json(
-        {
-          success: false,
-          message: error.message,
-        },
-        { status: 400 }
+        { success: false, message: error.message },
+        { status: 400 },
       );
     }
-
     return NextResponse.json(
       {
         success: false,
-        message:
-          error?.message ||
-          "Failed to update profile.",
+        message: error?.message || "Failed to update profile.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
