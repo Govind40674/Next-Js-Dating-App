@@ -1,0 +1,34 @@
+.matchPage {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+
+  overflow: hidden;
+}
+
+/* =========================
+   PROFILE - LEFT 20%
+   ========================= */
+
+.profileSection {
+  width: 25%;
+  height: 100vh;
+
+  flex-shrink: 0;
+}
+
+/* =========================
+   MATCHING - RIGHT 80%
+   ========================= */
+
+.matchingSection {
+  width: 75%;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}

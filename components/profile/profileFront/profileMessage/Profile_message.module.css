@@ -1,0 +1,339 @@
+/* Main message area */
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #111;
+  color: #fff;
+
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* "Messages" heading */
+.title {
+  flex-shrink: 0;
+
+  margin: 0;
+  padding: 16px 20px;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  border-bottom: 1px solid #2a2a2a;
+}
+
+/* Scrollable users area */
+.userList {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 8px 12px 20px;
+
+  box-sizing: border-box;
+}
+
+/* Scrollbar */
+.userList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.userList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.userList::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+.userList::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Individual user */
+.userCard {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 12px 10px;
+
+  margin-bottom: 4px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.userCard:hover {
+  background: #1f1f1f;
+}
+
+.userCard:active {
+  transform: scale(0.98);
+}
+
+/* Profile image wrapper */
+.imageContainer {
+  position: relative;
+
+  width: 58px;
+  height: 58px;
+
+  flex: 0 0 58px;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  background: #2a2a2a;
+}
+
+/* Profile image */
+.profileImage {
+  object-fit: cover;
+}
+
+/* User information */
+.userInfo {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+/* User name */
+.userInfo h3 {
+  margin: 0;
+
+  min-width: 0;
+
+  font-size: 16px;
+  font-weight: 500;
+
+  color: #fff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Unread message count */
+.unread {
+  min-width: 22px;
+  height: 22px;
+
+  padding: 0 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ff3b5c;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* Loading */
+.loading {
+  margin: 0;
+
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #aaa;
+
+  font-size: 15px;
+}
+
+/* Empty state */
+.emptyContainer {
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background: #111;
+  color: #fff;
+}
+
+/* Empty icon */
+.emptyIcon {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  background: #1f1f1f;
+
+  font-size: 32px;
+}
+
+/* Empty heading */
+.emptyContainer h2 {
+  margin: 0 0 8px;
+
+  font-size: 21px;
+  font-weight: 600;
+}
+
+/* Empty paragraph */
+.emptyContainer p {
+  max-width: 400px;
+
+  margin: 0;
+
+  color: #999;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (min-width: 600px) {
+  .title {
+    padding: 18px 24px;
+    font-size: 21px;
+  }
+
+  .userList {
+    padding: 10px 20px 24px;
+  }
+
+  .userCard {
+    padding: 14px;
+    gap: 16px;
+  }
+
+  .imageContainer {
+    width: 62px;
+    height: 62px;
+    flex-basis: 62px;
+  }
+
+  .userInfo h3 {
+    font-size: 17px;
+  }
+}
+
+
+/* =========================
+   DESKTOP
+   ========================= */
+
+@media (min-width: 900px) {
+  .title {
+    padding: 20px 28px;
+    font-size: 22px;
+  }
+
+  .userList {
+    padding: 12px 28px 30px;
+  }
+
+  .userCard {
+    max-width: 700px;
+
+    padding: 14px 16px;
+
+    margin-bottom: 6px;
+  }
+
+  .imageContainer {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
+
+  .userInfo h3 {
+    font-size: 17px;
+  }
+}
+
+
+/* =========================
+   SMALL MOBILE
+   ========================= */
+
+@media (max-width: 380px) {
+  .title {
+    padding: 14px 14px;
+    font-size: 18px;
+  }
+
+  .userList {
+    padding: 6px 8px 16px;
+  }
+
+  .userCard {
+    gap: 11px;
+    padding: 10px 8px;
+  }
+
+  .imageContainer {
+    width: 52px;
+    height: 52px;
+    flex-basis: 52px;
+  }
+
+  .userInfo h3 {
+    font-size: 15px;
+  }
+
+  .unread {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+}

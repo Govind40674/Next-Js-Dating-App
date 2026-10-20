@@ -1,0 +1,488 @@
+.communicationSection {
+  overflow: hidden;
+  padding: 67px 32px 80px;
+  background: linear-gradient(115deg, #fff 0%, #fff9fb 58%, #fff2f3 100%);
+}
+.communicationInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.03fr) minmax(0, 0.97fr);
+  align-items: center;
+  gap: clamp(38px, 6vw, 90px);
+  width: min(100%, 1240px);
+  margin: 0 auto;
+}
+.phoneShowcase {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 440px;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 30px 25px;
+}
+.videoPhone,
+.chatPhone {
+  position: relative;
+  overflow: hidden;
+  width: min(47%, 255px);
+  height: 370px;
+  border: 7px solid #211e23;
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: 0 20px 45px rgba(48, 20, 34, 0.19);
+}
+.videoPhone {
+  z-index: 1;
+  transform: rotate(-6deg) translateY(3px);
+}
+.videoPhone > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.phoneTop {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 50%;
+  display: flex;
+  width: 82px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 0 0 12px 12px;
+  background: #211e23;
+  transform: translateX(-50%);
+}
+.phoneTop span:first-child {
+  width: 32px;
+  height: 4px;
+  border-radius: 99px;
+  background: #777;
+}
+.phoneTop span:last-child {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #555;
+}
+.videoBadge {
+  position: absolute;
+  right: 8px;
+  bottom: 76px;
+  left: 8px;
+  border-radius: 8px;
+  padding: 8px 7px;
+  color: #fff;
+  background: rgba(20, 13, 22, 0.57);
+  font-size: 10px;
+  font-weight: 650;
+}
+.liveDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #45df91;
+}
+.callControls {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+.callControls span {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: rgba(28, 24, 31, 0.83);
+}
+.callControls .hangup {
+  background: #ff285b;
+  transform: rotate(135deg);
+}
+.chatPhone {
+  z-index: 2;
+  width: min(48%, 270px);
+  height: 335px;
+  margin-left: -25px;
+  border: 6px solid #fff;
+  border-radius: 29px;
+  box-shadow: 0 20px 43px rgba(48, 20, 34, 0.13);
+  transform: rotate(4deg) translateY(25px);
+}
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 16px 10px 12px;
+  border-bottom: 1px solid #f5edf1;
+  background: #fff;
+}
+.chatHeader > img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.chatHeader > div {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.chatHeader strong {
+  color: #2a242b;
+  font-size: 11px;
+}
+.chatHeader small {
+  color: #8c828e;
+  font-size: 9px;
+}
+.chatHeader small span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4cda8d;
+}
+.chatBody {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px 9px;
+}
+.messageLeft,
+.messageRight {
+  max-width: 92%;
+  border-radius: 11px;
+  padding: 8px 9px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+.messageLeft {
+  align-self: flex-start;
+  color: #4c434c;
+  background: #f4f1f4;
+  border-bottom-left-radius: 4px;
+}
+.messageRight {
+  align-self: flex-end;
+  color: #fff;
+  background: linear-gradient(135deg, #ff5383, #ef0d53);
+  border-bottom-right-radius: 4px;
+}
+.chatInput {
+  position: absolute;
+  right: 8px;
+  bottom: 9px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #f0e7ec;
+  border-radius: 999px;
+  padding: 7px 7px 7px 10px;
+  color: #b0a6b0;
+  font-size: 9px;
+}
+.chatInput span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #f20b52;
+}
+.floatingLike {
+  position: absolute;
+  z-index: 3;
+  top: 24%;
+  left: 2%;
+  display: grid;
+  width: 53px;
+  height: 53px;
+  place-items: center;
+  border-radius: 50%;
+  color: #f20b52;
+  background: #ffe4ec;
+  box-shadow: 0 8px 24px rgba(242, 11, 82, 0.12);
+}
+.floatingMiniHeart {
+  position: absolute;
+  z-index: 3;
+  right: 10%;
+  bottom: 13%;
+  color: #f20b52;
+  transform: rotate(16deg);
+}
+.communicationCopy {
+  min-width: 0;
+}
+.kicker {
+  display: block;
+  margin-bottom: 9px;
+  color: #f03c70;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 2.2px;
+}
+.communicationCopy h2 {
+  margin: 0;
+  color: #171319;
+  font-size: clamp(31px, 3.6vw, 44px);
+  font-weight: 850;
+  letter-spacing: -1.7px;
+  line-height: 1.12;
+}
+.communicationCopy h2 span {
+  color: #ed1454;
+}
+.intro {
+  max-width: 480px;
+  margin: 14px 0 20px;
+  color: #817782;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.communicationList {
+  display: grid;
+  gap: 12px;
+}
+.communicationItem {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+.communicationIcon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #ef1454;
+  background: #ffe6ed;
+}
+.communicationText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+.communicationText strong {
+  color: #28222a;
+  font-size: 13px;
+  font-weight: 800;
+}
+.communicationText small {
+  color: #8a808b;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.checkIcon {
+  flex: 0 0 auto;
+  color: #f7a4bc;
+}
+@media (min-width: 1400px) {
+  .phoneShowcase {
+    min-height: 490px;
+  }
+  .videoPhone {
+    height: 415px;
+  }
+  .chatPhone {
+    height: 380px;
+  }
+}
+@media (max-width: 1000px) {
+  .communicationSection {
+    padding: 56px 22px;
+  }
+  .communicationInner {
+    gap: 28px;
+  }
+  .phoneShowcase {
+    min-height: 390px;
+    padding-inline: 5px;
+  }
+  .videoPhone {
+    height: 330px;
+    width: 48%;
+  }
+  .chatPhone {
+    height: 305px;
+    width: 49%;
+    margin-left: -18px;
+  }
+  .communicationCopy h2 {
+    font-size: 34px;
+  }
+  .communicationIcon {
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 720px) {
+  .communicationSection {
+    padding: 50px 18px 60px;
+  }
+  .communicationInner {
+    grid-template-columns: 1fr;
+    gap: 29px;
+    max-width: 560px;
+  }
+  .phoneShowcase {
+    order: 2;
+    min-height: 390px;
+  }
+  .communicationCopy {
+    order: 1;
+  }
+  .communicationCopy h2 {
+    font-size: clamp(30px, 7vw, 39px);
+  }
+  .intro {
+    margin-bottom: 17px;
+  }
+  .communicationList {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 12px;
+  }
+  .communicationItem {
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .communicationIcon {
+    width: 34px;
+    height: 34px;
+  }
+  .communicationIcon svg {
+    width: 17px;
+    height: 17px;
+  }
+  .communicationText strong {
+    font-size: 12px;
+  }
+  .communicationText small {
+    font-size: 10px;
+  }
+  .checkIcon {
+    display: none;
+  }
+}
+@media (max-width: 460px) {
+  .communicationSection {
+    padding-inline: 15px;
+  }
+  .kicker {
+    font-size: 10px;
+  }
+  .communicationCopy h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+  .intro {
+    font-size: 13px;
+  }
+  .communicationList {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .communicationItem {
+    align-items: center;
+  }
+  .communicationText strong {
+    font-size: 12px;
+  }
+  .communicationText small {
+    font-size: 10px;
+  }
+  .phoneShowcase {
+    min-height: 330px;
+    padding-inline: 0;
+  }
+  .videoPhone {
+    width: 48%;
+    height: 298px;
+    border-width: 5px;
+    border-radius: 26px;
+  }
+  .chatPhone {
+    width: 49%;
+    height: 278px;
+    border-width: 5px;
+    border-radius: 25px;
+    margin-left: -12px;
+  }
+  .chatHeader {
+    gap: 6px;
+    padding: 12px 7px 8px;
+  }
+  .chatHeader > img {
+    width: 27px;
+    height: 27px;
+  }
+  .chatHeader strong {
+    font-size: 10px;
+  }
+  .chatHeader small {
+    font-size: 8px;
+  }
+  .chatBody {
+    gap: 7px;
+    padding: 11px 7px;
+  }
+  .messageLeft,
+  .messageRight {
+    font-size: 9px;
+    padding: 6px 7px;
+  }
+  .chatInput {
+    font-size: 8px;
+  }
+  .callControls {
+    gap: 5px;
+  }
+  .callControls span {
+    width: 29px;
+    height: 29px;
+  }
+  .callControls svg {
+    width: 14px;
+    height: 14px;
+  }
+  .videoBadge {
+    bottom: 67px;
+    font-size: 8px;
+  }
+  .floatingLike {
+    width: 42px;
+    height: 42px;
+  }
+  .floatingLike svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .videoPhone,
+  .chatPhone {
+    scroll-behavior: auto;
+  }
+}

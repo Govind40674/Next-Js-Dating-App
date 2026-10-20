@@ -1,0 +1,316 @@
+.discoverSection {
+  padding: 70px 32px 66px;
+  background: #fff;
+  scroll-margin-top: 84px;
+}
+.discoverInner {
+  width: min(100%, 1320px);
+  margin: 0 auto;
+}
+.sectionTop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+.kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: #f03c70;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 2.2px;
+}
+.sectionTop h2 {
+  margin: 0;
+  color: #171319;
+  font-size: clamp(30px, 3.5vw, 42px);
+  font-weight: 850;
+  letter-spacing: -1.5px;
+  line-height: 1.13;
+}
+.sectionTop h2 span {
+  color: #ed1454;
+}
+.sectionTop p {
+  margin: 10px 0 0;
+  color: #817782;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.sectionActions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 9px;
+}
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 9px;
+  color: #ed1454;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.viewAll:hover {
+  color: #bd003a;
+}
+.arrowButton {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border: 1px solid #ffd2df;
+  border-radius: 50%;
+  color: #ed1454;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+.arrowButton:hover {
+  color: #fff;
+  background: #ed1454;
+  transform: translateY(-1px);
+}
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 15px;
+}
+.profileCard {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  aspect-ratio: 0.71;
+  border-radius: 17px;
+  background: #f6e9ee;
+  box-shadow: 0 8px 20px rgba(48, 21, 34, 0.07);
+  isolation: isolate;
+}
+.profilePhoto {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  transition: transform 0.45s ease;
+}
+.profileCard:hover .profilePhoto {
+  transform: scale(1.045);
+}
+.profileShade {
+  position: absolute;
+  inset: 25% 0 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(8, 7, 10, 0.12) 25%,
+    rgba(8, 7, 10, 0.82) 100%
+  );
+}
+.profileDetails {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 13px;
+  left: 12px;
+  color: #fff;
+}
+.profileDetails h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 5px;
+  font-size: clamp(12px, 1.1vw, 16px);
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+.onlineDot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #a9a3a9;
+}
+.online {
+  background: #45e090;
+  box-shadow: 0 0 0 3px rgba(69, 224, 144, 0.12);
+}
+.profileDetails p {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin: 0;
+  font-size: clamp(9px, 0.82vw, 11px);
+  line-height: 1.3;
+  opacity: 0.93;
+}
+.profileDetails p svg {
+  flex: 0 0 auto;
+}
+.likeButton {
+  position: absolute;
+  z-index: 3;
+  right: 10px;
+  bottom: 11px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #f20b52;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    color 0.16s ease,
+    background 0.16s ease;
+}
+.likeButton:hover {
+  transform: scale(1.07);
+}
+.liked {
+  color: #fff;
+  background: #f20b52;
+}
+.likeHint {
+  margin: 14px 0 0;
+  color: #9b8e99;
+  font-size: 11px;
+  text-align: right;
+}
+@media (max-width: 1100px) {
+  .discoverSection {
+    padding: 60px 22px;
+  }
+  .profileGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .profileCard {
+    aspect-ratio: 0.82;
+  }
+  .profileDetails h3 {
+    font-size: 15px;
+  }
+  .profileDetails p {
+    font-size: 11px;
+  }
+  .likeButton {
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 650px) {
+  .discoverSection {
+    padding: 48px 16px;
+  }
+  .sectionTop {
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .sectionTop h2 {
+    font-size: 29px;
+    letter-spacing: -1px;
+  }
+  .sectionTop p {
+    max-width: 470px;
+    font-size: 12px;
+  }
+  .sectionActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 7px;
+  }
+  .viewAll {
+    width: 100%;
+    justify-content: flex-end;
+    margin: 0 0 3px;
+    font-size: 11px;
+  }
+  .arrowButton {
+    width: 33px;
+    height: 33px;
+  }
+  .profileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .profileCard {
+    aspect-ratio: 0.78;
+    border-radius: 14px;
+  }
+  .profileDetails {
+    bottom: 12px;
+    left: 10px;
+    right: 8px;
+  }
+  .profileDetails h3 {
+    gap: 5px;
+    font-size: 13px;
+  }
+  .profileDetails p {
+    font-size: 10px;
+  }
+  .likeButton {
+    right: 8px;
+    bottom: 8px;
+    width: 32px;
+    height: 32px;
+  }
+  .likeButton svg {
+    width: 17px;
+    height: 17px;
+  }
+  .likeHint {
+    text-align: left;
+    font-size: 10px;
+  }
+}
+@media (max-width: 370px) {
+  .sectionTop {
+    flex-direction: column;
+  }
+  .sectionActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .viewAll {
+    width: auto;
+    margin-right: auto;
+  }
+  .profileGrid {
+    gap: 9px;
+  }
+  .profileCard {
+    aspect-ratio: 0.72;
+  }
+  .profileDetails h3 {
+    font-size: 12px;
+  }
+  .profileDetails p {
+    font-size: 9px;
+  }
+  .likeButton {
+    width: 29px;
+    height: 29px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profilePhoto,
+  .arrowButton,
+  .likeButton {
+    transition: none;
+  }
+}

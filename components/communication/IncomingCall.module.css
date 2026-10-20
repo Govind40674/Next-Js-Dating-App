@@ -1,0 +1,323 @@
+/* Full-screen background */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  animation: overlayFadeIn 180ms ease-out;
+}
+
+/* Incoming call card */
+.modal {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 380px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 32px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+
+  background: #ffffff;
+  color: #111827;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.28),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+
+  text-align: center;
+  animation: modalEnter 220ms ease-out;
+}
+
+/* Incoming audio/video call text */
+.callLabel {
+  margin: 0 0 24px;
+  color: #6b7280;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Circular caller photo */
+.photoWrapper {
+  position: relative;
+  flex-shrink: 0;
+
+  width: 112px;
+  height: 112px;
+  margin-bottom: 18px;
+
+  overflow: hidden;
+  border: 4px solid #f3f4f6;
+  border-radius: 50%;
+  background: #e5e7eb;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+.profilePhoto {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Caller display name */
+.callerName {
+  max-width: 100%;
+  margin: 0 0 28px;
+
+  color: #111827;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  overflow-wrap: anywhere;
+}
+
+/* Accept and reject buttons */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  width: 100%;
+}
+
+/* Shared button styling */
+.actionButton {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 48px;
+  flex: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 999px;
+
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+/* Reject button */
+.rejectButton {
+  background: #dc2626;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.18);
+}
+
+.rejectButton:hover:not(:disabled) {
+  background: #b91c1c;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Accept button */
+.acceptButton {
+  background: #16a34a;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.18);
+}
+
+.acceptButton:hover:not(:disabled) {
+  background: #15803d;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Keyboard accessibility */
+.actionButton:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+/* Disabled while processing a call */
+.actionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Entrance animations */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .overlay {
+    padding: 14px;
+  }
+
+  .modal {
+    max-width: 100%;
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .callLabel {
+    margin-bottom: 20px;
+    font-size: 12px;
+  }
+
+  .photoWrapper {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 14px;
+  }
+
+  .callerName {
+    margin-bottom: 22px;
+    font-size: 20px;
+  }
+
+  .actions {
+    gap: 10px;
+  }
+
+  .actionButton {
+    min-height: 46px;
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Standard phones */
+@media (min-width: 361px) and (max-width: 480px) {
+  .overlay {
+    padding: 18px;
+  }
+
+  .modal {
+    max-width: 360px;
+    padding: 28px 22px;
+  }
+
+  .photoWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .callerName {
+    font-size: 22px;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .modal {
+    max-width: 400px;
+    padding: 34px 32px;
+  }
+
+  .photoWrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  .callerName {
+    font-size: 25px;
+  }
+}
+
+/* Laptops and desktops */
+@media (min-width: 769px) {
+  .modal {
+    max-width: 400px;
+    padding: 36px 32px;
+  }
+}
+
+/* Short screens in landscape or compact windows */
+@media (max-height: 500px) {
+  .overlay {
+    align-items: center;
+    overflow-y: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .modal {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .callLabel {
+    margin-bottom: 12px;
+  }
+
+  .photoWrapper {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 10px;
+  }
+
+  .callerName {
+    margin-bottom: 16px;
+    font-size: 20px;
+  }
+
+  .actionButton {
+    min-height: 42px;
+  }
+}
+
+/* Respect reduced-motion accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal {
+    animation: none;
+  }
+
+  .actionButton {
+    transition: none;
+  }
+}

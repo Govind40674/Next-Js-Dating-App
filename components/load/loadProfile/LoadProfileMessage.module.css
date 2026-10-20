@@ -1,0 +1,204 @@
+.container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #111111;
+
+  padding: 10px 20px;
+
+  overflow-y: auto;
+}
+
+/* Message row */
+.messageCard {
+  width: 100%;
+  min-height: 80px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 12px 5px;
+
+  border-bottom: 1px solid #242424;
+}
+
+/* Profile image */
+.avatar {
+  position: relative;
+
+  width: 55px;
+  height: 55px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #242424;
+
+  overflow: hidden;
+}
+
+/* User information */
+.userInfo {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+/* Name */
+.name {
+  position: relative;
+
+  width: 120px;
+  height: 15px;
+
+  border-radius: 6px;
+
+  background: #242424;
+
+  overflow: hidden;
+}
+
+/* Last message */
+.message {
+  position: relative;
+
+  width: 180px;
+  max-width: 70%;
+
+  height: 12px;
+
+  border-radius: 6px;
+
+  background: #242424;
+
+  overflow: hidden;
+}
+
+/* Unread count */
+.count {
+  position: relative;
+
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #242424;
+
+  overflow: hidden;
+}
+
+/* Shimmer for everything */
+.avatar::after,
+.name::after,
+.message::after,
+.count::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+
+  transform: translateX(-100%);
+
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px 15px;
+  }
+
+  .messageCard {
+    min-height: 75px;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .name {
+    width: 110px;
+  }
+
+  .message {
+    width: 160px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 5px 10px;
+  }
+
+  .messageCard {
+    min-height: 70px;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .name {
+    width: 100px;
+  }
+
+  .message {
+    width: 140px;
+    max-width: 65%;
+  }
+
+  .count {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .message {
+    width: 110px;
+  }
+
+  .name {
+    width: 85px;
+  }
+}

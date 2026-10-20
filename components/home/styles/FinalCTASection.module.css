@@ -1,0 +1,299 @@
+.ctaSection {
+  padding: 0 32px 66px;
+  background: #fff;
+}
+.ctaInner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 2.2fr) minmax(
+      150px,
+      0.7fr
+    );
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
+  width: min(100%, 1280px);
+  min-height: 210px;
+  margin: 0 auto;
+  border: 1px solid #fbd9e4;
+  border-radius: 27px;
+  padding: 27px 30px;
+  background: linear-gradient(110deg, #ffe5ee 0%, #fff0f2 48%, #ffe4d5 100%);
+}
+.ctaInner::before,
+.ctaInner::after {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  content: "";
+  pointer-events: none;
+}
+.ctaInner::before {
+  width: 180px;
+  height: 180px;
+  top: -95px;
+  left: 20%;
+}
+.ctaInner::after {
+  width: 155px;
+  height: 155px;
+  right: 13%;
+  bottom: -100px;
+}
+.photoStack {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 130px;
+}
+.smallAvatar {
+  width: 53px;
+  height: 53px;
+  overflow: hidden;
+  margin-left: -12px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 13px rgba(78, 34, 50, 0.13);
+}
+.smallAvatar:first-child {
+  transform: translateY(-7px);
+}
+.smallAvatar:nth-child(2) {
+  transform: translateY(7px);
+}
+.smallAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoHeart {
+  position: absolute;
+  top: 8px;
+  left: 16%;
+  color: #f20b52;
+  transform: rotate(-12deg);
+}
+.photoHeart svg {
+  width: 29px;
+  height: 29px;
+}
+.photoSparkle {
+  position: absolute;
+  right: 9%;
+  bottom: 8px;
+  color: #f76c9b;
+}
+.photoSparkle svg {
+  width: 20px;
+  height: 20px;
+}
+.ctaCopy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  text-align: center;
+}
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #f03c70;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 1.8px;
+}
+.ctaCopy h2 {
+  margin: 0;
+  color: #1c171d;
+  font-size: clamp(25px, 3vw, 35px);
+  font-weight: 850;
+  letter-spacing: -1.2px;
+  line-height: 1.18;
+}
+.ctaCopy p {
+  margin: 9px 0 16px;
+  color: #6f626e;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.ctaButton {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 0 26px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff2162, #e60049);
+  box-shadow: 0 8px 18px rgba(235, 13, 79, 0.2);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 23px rgba(235, 13, 79, 0.28);
+}
+.joinedCount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 13px;
+  color: #8b7886;
+  font-size: 10px;
+}
+.joinedCount > span {
+  display: inline-flex;
+  padding-left: 5px;
+}
+.joinedCount i {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin-left: -5px;
+  border: 2px solid #fff0f3;
+  border-radius: 50%;
+  background: #fff;
+}
+.joinedCount i:nth-child(1) {
+  background: #e7b49d;
+}
+.joinedCount i:nth-child(2) {
+  background: #bd7d67;
+}
+.joinedCount i:nth-child(3) {
+  background: #8aa2ad;
+}
+.joinedCount strong {
+  color: #ef1454;
+  font-size: 11px;
+}
+.polaroid {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  width: 135px;
+  padding: 8px 8px 20px;
+  background: #fff;
+  box-shadow: 0 8px 23px rgba(74, 38, 54, 0.14);
+  transform: rotate(7deg);
+}
+.polaroid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 0.9;
+  object-fit: cover;
+}
+.polaroidHeart {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  width: 31px;
+  height: 31px;
+  color: #fa4177;
+  transform: rotate(14deg);
+}
+@media (max-width: 900px) {
+  .ctaSection {
+    padding: 0 22px 56px;
+  }
+  .ctaInner {
+    grid-template-columns: 100px minmax(0, 1fr) 100px;
+    gap: 10px;
+    padding: 24px 18px;
+  }
+  .polaroid {
+    width: 103px;
+  }
+  .smallAvatar {
+    width: 42px;
+    height: 42px;
+  }
+  .ctaCopy h2 {
+    font-size: 28px;
+  }
+  .ctaCopy p {
+    font-size: 12px;
+  }
+  .ctaButton {
+    min-height: 44px;
+    padding-inline: 18px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 650px) {
+  .ctaSection {
+    padding: 0 16px 48px;
+  }
+  .ctaInner {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    padding: 27px 19px 25px;
+    border-radius: 22px;
+  }
+  .photoStack {
+    min-height: 45px;
+    order: 2;
+  }
+  .smallAvatar {
+    width: 39px;
+    height: 39px;
+  }
+  .photoHeart {
+    top: -1px;
+    left: 37%;
+  }
+  .photoSparkle {
+    right: 34%;
+    bottom: 0;
+  }
+  .ctaCopy {
+    order: 1;
+  }
+  .ctaCopy h2 {
+    font-size: 27px;
+    letter-spacing: -0.8px;
+  }
+  .ctaCopy p {
+    margin: 8px 0 15px;
+    font-size: 12px;
+  }
+  .ctaButton {
+    width: 100%;
+    max-width: 340px;
+  }
+  .polaroid {
+    display: none;
+  }
+  .joinedCount {
+    font-size: 9px;
+  }
+}
+@media (max-width: 360px) {
+  .ctaSection {
+    padding-inline: 11px;
+  }
+  .ctaInner {
+    padding-inline: 14px;
+  }
+  .ctaCopy h2 {
+    font-size: 24px;
+  }
+  .ctaButton {
+    padding-inline: 12px;
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ctaButton {
+    transition: none;
+  }
+}

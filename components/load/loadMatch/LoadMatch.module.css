@@ -1,0 +1,56 @@
+.container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #111111;
+}
+
+.imageWrapper {
+  position: relative;
+
+  width: 150px;
+  height: 150px;
+}
+
+/* Fixed profile image */
+.image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  border-radius: 50%;
+
+  z-index: 2;
+}
+
+/* Expanding white circle */
+.ripple {
+  position: absolute;
+
+  inset: 0;
+
+  border: 3px solid white;
+  border-radius: 50%;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  animation: expandRipple 1.5s infinite ease-out;
+}
+
+@keyframes expandRipple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

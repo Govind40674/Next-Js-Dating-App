@@ -1,0 +1,35 @@
+/* Profile.module.css */
+
+.profileContainer {
+  width: 100%;
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #111010;
+  color: white;
+
+  overflow: hidden;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.profileContainer > :first-child {
+  flex: 0 0 auto;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+  .profileContainer {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+}

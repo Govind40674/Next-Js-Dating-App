@@ -1,0 +1,732 @@
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  background: #0a0a0a;
+  color: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+/* ================================
+   IMAGE SECTION
+================================ */
+
+.imageGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.imageBox {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 160px;
+
+  border: 2px dashed #3f3f46;
+  border-radius: 16px;
+
+  background: #18181b;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.imageBox:hover {
+  border-color: #6366f1;
+  background: #202027;
+  transform: translateY(-2px);
+}
+
+/* Uploaded image */
+
+.image {
+  object-fit: cover;
+}
+
+/* Add image text */
+
+.uploadText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #a1a1aa;
+
+  pointer-events: none;
+}
+
+.uploadText span {
+  width: 45px;
+  height: 45px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #27272a;
+  color: #d4d4d8;
+
+  font-size: 28px;
+  font-weight: 300;
+
+  margin-bottom: 8px;
+}
+
+.uploadText p {
+  margin: 0;
+
+  font-size: 14px;
+  color: #a1a1aa;
+}
+
+/* File input */
+
+.fileInput {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  cursor: pointer;
+
+  z-index: 10;
+}
+
+/* Image count */
+
+.imageCount {
+  margin-top: 12px;
+
+  font-size: 14px;
+
+  color: #a1a1aa;
+}
+/* =====================================================
+   FORM
+===================================================== */
+
+.form {
+  width: 100%;
+  max-width: 850px;
+  padding: 32px;
+  background: #111111;
+  border: 1px solid #252525;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   FORM GROUP
+===================================================== */
+
+.formGroup {
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  color: #eeeeee;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 13px 15px;
+
+  background: #181818;
+  color: #ffffff;
+
+  border: 1px solid #303030;
+  border-radius: 10px;
+
+  outline: none;
+
+  font-size: 15px;
+  font-family: inherit;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.formGroup input {
+  height: 48px;
+}
+
+.formGroup textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Placeholder */
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+  color: #777777;
+}
+
+/* Focus */
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  border-color: #6366f1;
+  background: #1b1b1b;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error {
+  margin: 6px 0 0;
+  color: #ff6b6b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* =====================================================
+   INTEREST HINT
+===================================================== */
+
+.interestHint {
+  margin: 6px 0 0;
+  color: #777777;
+  font-size: 12px;
+}
+
+/* =====================================================
+   REACT SELECT
+===================================================== */
+
+/* Main control */
+
+:global(.profile-select__control) {
+  min-height: 48px !important;
+
+  background: #181818 !important;
+
+  border: 1px solid #303030 !important;
+
+  border-radius: 10px !important;
+
+  box-shadow: none !important;
+
+  cursor: pointer !important;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Focused control */
+
+:global(.profile-select__control--is-focused) {
+  border-color: #6366f1 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Selected text */
+
+:global(.profile-select__single-value) {
+  color: #ffffff !important;
+}
+
+/* Placeholder */
+
+:global(.profile-select__placeholder) {
+  color: #777777 !important;
+}
+
+/* Input */
+
+:global(.profile-select__input-container) {
+  color: #ffffff !important;
+}
+
+/* Dropdown */
+
+:global(.profile-select__menu) {
+  margin-top: 5px !important;
+
+  background: #181818 !important;
+
+  border: 1px solid #303030 !important;
+
+  border-radius: 10px !important;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.5) !important;
+
+  z-index: 100;
+}
+
+/* Dropdown options */
+
+:global(.profile-select__option) {
+  padding: 11px 14px !important;
+
+  background: #181818 !important;
+
+  color: #dddddd !important;
+
+  cursor: pointer !important;
+
+  font-size: 14px;
+}
+
+/* Hover */
+
+:global(.profile-select__option--is-focused) {
+  background: #262626 !important;
+
+  color: #ffffff !important;
+}
+
+/* Selected */
+
+:global(.profile-select__option--is-selected) {
+  background: #6366f1 !important;
+
+  color: #ffffff !important;
+}
+
+/* Arrow */
+
+:global(.profile-select__indicator) {
+  color: #888888 !important;
+}
+
+:global(.profile-select__indicator:hover) {
+  color: #ffffff !important;
+}
+
+/* Separator */
+
+:global(.profile-select__indicator-separator) {
+  background: #303030 !important;
+}
+
+/* =====================================================
+   IMAGE SECTION
+===================================================== */
+
+.imageGrid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-top: 12px;
+}
+
+/* =====================================================
+   IMAGE BOX
+===================================================== */
+
+.imageBox {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  background: #181818;
+
+  border: 1px dashed #3a3a3a;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.imageBox:hover {
+  border-color: #6366f1;
+
+  background: #1d1d1d;
+
+  transform: translateY(-2px);
+}
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.image {
+  object-fit: cover;
+
+  width: 100%;
+  height: 100%;
+
+  transition: transform 0.3s ease;
+}
+
+.imageBox:hover .image {
+  transform: scale(1.03);
+}
+
+/* =====================================================
+   UPLOAD TEXT
+===================================================== */
+
+.uploadText {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color: #777777;
+
+  pointer-events: none;
+}
+
+.uploadText span {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #3a3a3a;
+
+  border-radius: 50%;
+
+  font-size: 26px;
+
+  color: #999999;
+}
+
+.uploadText p {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #777777;
+}
+
+/* =====================================================
+   FILE INPUT
+===================================================== */
+
+.fileInput {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  cursor: pointer;
+
+  z-index: 5;
+}
+
+/* =====================================================
+   IMAGE COUNT
+===================================================== */
+
+.imageCount {
+  margin: 10px 0 0;
+
+  color: #999999;
+
+  font-size: 13px;
+
+  text-align: right;
+}
+
+/* =====================================================
+   SUBMIT BUTTON
+===================================================== */
+
+.submitButton {
+  width: 100%;
+
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #6366f1;
+
+  color: #ffffff;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #5558e8;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 25px rgba(99, 102, 241, 0.25);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  background: #2c2c2c;
+
+  color: #666666;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loadingContainer {
+  min-height: 100vh;
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 18px;
+
+  background: #0a0a0a;
+
+  color: #ffffff;
+}
+
+.loader {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  border: 4px solid #292929;
+
+  border-top-color: #6366f1;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.loadingText {
+  margin: 0;
+
+  color: #999999;
+
+  font-size: 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+  .page {
+    padding: 25px 15px;
+  }
+
+  .form {
+    padding: 25px 20px;
+
+    border-radius: 15px;
+  }
+
+  .imageGrid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+  .page {
+    padding: 15px 10px;
+
+    align-items: flex-start;
+  }
+
+  .form {
+    padding: 20px 15px;
+
+    border-radius: 13px;
+
+    border-left: none;
+    border-right: none;
+  }
+
+  .formGroup {
+    margin-bottom: 18px;
+  }
+
+  .formGroup label {
+    font-size: 13px;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    font-size: 14px;
+  }
+
+  .formGroup input {
+    height: 46px;
+  }
+
+  .imageGrid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .submitButton {
+    height: 48px;
+  }
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 380px) {
+  .page {
+    padding: 10px 8px;
+  }
+
+  .form {
+    padding: 18px 12px;
+  }
+
+  .imageGrid {
+    gap: 8px;
+  }
+
+  .uploadText span {
+    width: 36px;
+    height: 36px;
+
+    font-size: 22px;
+  }
+
+  .uploadText p {
+    font-size: 11px;
+  }
+}
+
+/* =====================================================
+   LARGE DESKTOP
+===================================================== */
+
+@media (min-width: 1200px) {
+  .page {
+    padding-top: 55px;
+    padding-bottom: 55px;
+  }
+
+  .form {
+    max-width: 900px;
+
+    padding: 40px;
+  }
+
+  .imageGrid {
+    gap: 18px;
+  }
+}
+

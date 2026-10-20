@@ -1,0 +1,155 @@
+.storiesSection {
+  padding: 71px 32px 82px;
+  background: #fff;
+  scroll-margin-top: 84px;
+}
+.sectionHeading {
+  max-width: 800px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+.kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: #f03c70;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 2.2px;
+}
+.sectionHeading h2 {
+  margin: 0;
+  color: #171319;
+  font-size: clamp(30px, 3.5vw, 42px);
+  font-weight: 850;
+  letter-spacing: -1.6px;
+  line-height: 1.15;
+}
+.sectionHeading h2 span {
+  color: #ed1454;
+}
+.sectionHeading p {
+  margin: 11px auto 0;
+  color: #817782;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.storiesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+.storyCard {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 25px 24px 22px;
+  border: 1px solid #f4e9ee;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fff, #fff9fb);
+  box-shadow: 0 10px 27px rgba(52, 22, 37, 0.045);
+}
+.stars {
+  display: flex;
+  gap: 3px;
+  color: #ffb83d;
+}
+.quote {
+  flex: 1;
+  margin: 16px 0 22px;
+  color: #615762;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.storyAuthor {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding-top: 16px;
+  border-top: 1px solid #f3e9ee;
+}
+.storyAuthor > img {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 auto;
+  border: 2px solid #ffe0e9;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.storyAuthor > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+.storyAuthor strong {
+  color: #28222a;
+  font-size: 12px;
+  font-weight: 800;
+}
+.storyAuthor small {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #8a7f8a;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.storyAuthor small svg {
+  flex: 0 0 auto;
+  color: #ef1454;
+}
+@media (max-width: 900px) {
+  .storiesSection {
+    padding: 60px 22px;
+  }
+  .storiesGrid {
+    gap: 12px;
+  }
+  .storyCard {
+    padding: 20px 17px 18px;
+  }
+  .quote {
+    font-size: 12px;
+  }
+}
+@media (max-width: 650px) {
+  .storiesSection {
+    padding: 49px 16px 55px;
+  }
+  .sectionHeading {
+    margin-bottom: 26px;
+  }
+  .sectionHeading h2 {
+    font-size: 29px;
+    letter-spacing: -1px;
+  }
+  .sectionHeading p {
+    font-size: 12px;
+  }
+  .storiesGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 480px;
+  }
+  .storyCard {
+    padding: 19px;
+    border-radius: 15px;
+  }
+  .quote {
+    margin: 12px 0 17px;
+    font-size: 12px;
+  }
+  .storyAuthor {
+    padding-top: 12px;
+  }
+}
+@media (max-width: 350px) {
+  .storiesSection {
+    padding-inline: 12px;
+  }
+  .storyCard {
+    padding: 16px;
+  }
+}
