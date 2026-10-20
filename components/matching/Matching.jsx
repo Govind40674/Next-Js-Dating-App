@@ -15,7 +15,7 @@ import ProfileCmpln from "../profileCmpln/ProfileCmpln";
 
 
 const Matching = () => {
-  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditPage} = useContext(MyContext);
+  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditpage} = useContext(MyContext);
   if(isMessageBox) {
     
      return <PrivateMessage messageUserId={messageUserId}/>
@@ -24,7 +24,7 @@ const Matching = () => {
   if(isMatchBox) {
     return <OtherProfile matchUserId={matchUserId}/>;
   }
-  if(isEditPage){
+  if(isEditpage){
     return <ProfileCmpln/>
   }
 

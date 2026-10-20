@@ -40,7 +40,7 @@ export default function ProtectedRoute({ children }) {
       } catch (error) {
         if (cancelled) return;
 
-        console.error(
+        console.log(
           "Failed to update today's view count:",
           error.response?.data || error.message
         );

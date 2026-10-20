@@ -22,7 +22,7 @@ const ProfileBack = () => {
     localStorage.clear()
     router.push('/login')
   }
-  const handleEditProfile = () => {
+  const handleEditProfile = async () => {
     setIsMessageBox(false);
     setIsMatchBox(false);
     setIsMatching(false);
