@@ -1,188 +1,94 @@
+
 import connectDB from "@/lib/connectDB";
 import Message from "@/models/Message";
 import User from "@/models/User";
-import admin from "@/lib/firebase-admin";
+import { adminMessaging } from "@/lib/firebase-admin";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function POST(request) {
-try {
-await connectDB();
-
-
-const {
-  senderId,
-  receiverId,
-  message,
-} = await request.json();
-
-// =====================================================
-// 1. VALIDATE INPUT
-// =====================================================
-
-if (
-  !senderId ||
-  !receiverId ||
-  !message?.trim()
-) {
-  return NextResponse.json(
-    {
-      success: false,
-      message:
-        "senderId, receiverId and message are required",
-    },
-    { status: 400 }
-  );
-}
-
-// =====================================================
-// 2. SAVE MESSAGE IN MONGODB
-// =====================================================
-
-const newMessage = await Message.create({
-  sender: senderId,
-  receiver: receiverId,
-  message: message.trim(),
-  status: "unread",
-});
-
-console.log(
-  "Message saved:",
-  newMessage._id.toString()
-);
-
-// =====================================================
-// 3. FIND RECEIVER
-// =====================================================
-
-const receiver = await User.findById(
-  receiverId
-).select(
-  "name isOnline fcmToken"
-);
-
-if (!receiver) {
-  return NextResponse.json(
-    {
-      success: true,
-      message: newMessage,
-    },
-    { status: 201 }
-  );
-}
-
-// =====================================================
-// 4. SEND FCM ONLY IF RECEIVER IS OFFLINE
-// =====================================================
-
-if (
-  !receiver.isOnline &&
-  receiver.fcmToken
-) {
   try {
-    const notificationMessage =
-      {
-        token: receiver.fcmToken,
+    await connectDB();
 
-        notification: {
-          title: receiver.name
-            ? `${receiver.name} has a new message`
-            : "New message",
+    const { senderId, receiverId, message } = await request.json();
 
-          body: message.trim(),
-        },
-
-        data: {
-          type: "message",
-
-          senderId:
-            senderId.toString(),
-
-          receiverId:
-            receiverId.toString(),
-
-          messageId:
-            newMessage._id.toString(),
-        },
-      };
-
-    await admin
-      .messaging()
-      .send(notificationMessage);
-
-    console.log(
-      "FCM notification sent successfully."
-    );
-  } catch (fcmError) {
-    console.error(
-      "FCM notification failed:",
-      fcmError
-    );
-
-    // -------------------------------------------------
-    // Do NOT fail the message request if FCM fails.
-    // The message is already saved in MongoDB.
-    // -------------------------------------------------
-
-    // Remove invalid FCM token if Firebase says
-    // that the token is no longer registered.
     if (
-      fcmError?.code ===
-        "messaging/registration-token-not-registered" ||
-      fcmError?.code ===
-        "messaging/invalid-registration-token"
+      !mongoose.Types.ObjectId.isValid(senderId || "") ||
+      !mongoose.Types.ObjectId.isValid(receiverId || "") ||
+      typeof message !== "string" ||
+      !message.trim()
     ) {
-      await User.findByIdAndUpdate(
-        receiverId,
-        {
-          $unset: {
-            fcmToken: 1,
-          },
-        }
-      );
-
-      console.log(
-        "Invalid FCM token removed."
+      return NextResponse.json(
+        { success: false, message: "Valid senderId, receiverId and message are required." },
+        { status: 400 }
       );
     }
+
+    const [sender, receiver] = await Promise.all([
+      User.findById(senderId).select("name"),
+      User.findById(receiverId).select("name isOnline fcmToken"),
+    ]);
+
+    if (!sender || !receiver) {
+      return NextResponse.json(
+        { success: false, message: "Sender or receiver not found." },
+        { status: 404 }
+      );
+    }
+
+    const newMessage = await Message.create({
+      sender: senderId,
+      receiver: receiverId,
+      message: message.trim(),
+      status: "unread",
+    });
+
+    // Push notification is attempted only for an offline recipient.
+    if (!receiver.isOnline && receiver.fcmToken) {
+      try {
+        await adminMessaging.send({
+          token: receiver.fcmToken,
+          data: {
+            type: "message",
+            title: sender.name
+              ? `${sender.name} sent you a message`
+              : "New message",
+            body: message.trim().slice(0, 180),
+            senderId: String(senderId),
+            receiverId: String(receiverId),
+            messageId: String(newMessage._id),
+            url: `/match?messageUserId=${encodeURIComponent(String(senderId))}`,
+          },
+          webpush: {
+            headers: { Urgency: "high" },
+          },
+        });
+      } catch (pushError) {
+        console.error("FCM message notification failed:", pushError);
+
+        if (
+          [
+            "messaging/registration-token-not-registered",
+            "messaging/invalid-registration-token",
+          ].includes(pushError?.code)
+        ) {
+          await User.findByIdAndUpdate(receiverId, {
+            $unset: { fcmToken: 1 },
+          });
+        }
+      }
+    }
+
+    return NextResponse.json(
+      { success: true, message: newMessage },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Message send failed:", error);
+
+    return NextResponse.json(
+      { success: false, message: "Failed to send message." },
+      { status: 500 }
+    );
   }
-} else {
-  console.log(
-    "FCM notification skipped:",
-    receiver.isOnline
-      ? "Receiver is online."
-      : "Receiver has no FCM token."
-  );
-}
-
-// =====================================================
-// 5. RETURN SAVED MESSAGE
-// =====================================================
-
-return NextResponse.json(
-  {
-    success: true,
-    message: newMessage,
-  },
-  { status: 201 }
-);
-
-
-} catch (error) {
-console.error(
-"Error sending message:",
-error
-);
-
-
-return NextResponse.json(
-  {
-    success: false,
-    message:
-      "Failed to send message",
-  },
-  { status: 500 }
-);
-
-
-}
 }

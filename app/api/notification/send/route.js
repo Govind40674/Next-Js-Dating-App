@@ -1,65 +1,93 @@
-import { NextResponse } from "next/server";
+
+import connectDB from "@/lib/connectDB";
+import User from "@/models/User";
 import { adminMessaging } from "@/lib/firebase-admin";
+import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function POST(request) {
-try {
-const { fcmToken, title, body, data } = await request.json();
+  try {
+    await connectDB();
 
+    const {
+      callerId,
+      receiverId,
+      callerName,
+      callType,
+      roomId,
+      callID,
+    } = await request.json();
 
-// Validate FCM token
-if (!fcmToken) {
-  return NextResponse.json(
-    {
-      success: false,
-      message: "FCM token is required",
-    },
-    { status: 400 }
-  );
-}
-
-// Firebase Cloud Messaging requires data values to be strings.
-const notificationData = {};
-
-if (data && typeof data === "object") {
-  for (const [key, value] of Object.entries(data)) {
-    if (value !== undefined && value !== null) {
-      notificationData[key] = String(value);
+    if (
+      !mongoose.Types.ObjectId.isValid(callerId || "") ||
+      !mongoose.Types.ObjectId.isValid(receiverId || "") ||
+      !["audio", "video"].includes(callType) ||
+      typeof roomId !== "string" ||
+      !roomId.trim() ||
+      typeof callID !== "string" ||
+      !callID.trim()
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Invalid call notification data." },
+        { status: 400 }
+      );
     }
+
+    const [caller, receiver] = await Promise.all([
+      User.findById(callerId).select("name"),
+      User.findById(receiverId).select("name isOnline fcmToken"),
+    ]);
+
+    if (!caller || !receiver) {
+      return NextResponse.json(
+        { success: false, message: "Caller or receiver not found." },
+        { status: 404 }
+      );
+    }
+
+    // Do not send a push if the recipient is currently online.
+    if (receiver.isOnline || !receiver.fcmToken) {
+      return NextResponse.json({
+        success: true,
+        sent: false,
+        reason: receiver.isOnline ? "receiver-online" : "no-fcm-token",
+      });
+    }
+
+    const safeCallerName = callerName || caller.name || "Someone";
+    const title = `${safeCallerName} is calling you`;
+    const body = `Incoming ${callType} call`;
+
+    const messageId = await adminMessaging.send({
+      token: receiver.fcmToken,
+      data: {
+        type: "call",
+        title,
+        body,
+        callerId: String(callerId),
+        receiverId: String(receiverId),
+        callerName: safeCallerName,
+        callType,
+        roomId: roomId.trim(),
+        callID: callID.trim(),
+        url: "/match",
+      },
+      webpush: {
+        headers: { Urgency: "high", TTL: "60" },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      sent: true,
+      messageId,
+    });
+  } catch (error) {
+    console.error("Call notification failed:", error);
+
+    return NextResponse.json(
+      { success: false, message: "Failed to send call notification." },
+      { status: 500 }
+    );
   }
-}
-
-// Build FCM message
-const message = {
-  token: fcmToken,
-  notification: {
-    title: title || "New Message",
-    body: body || "You received a new message",
-  },
-  data: notificationData,
-};
-
-// Send notification
-const response = await adminMessaging.send(message);
-
-console.log("FCM notification sent:", response);
-
-return NextResponse.json({
-  success: true,
-  messageId: response,
-});
-
-} catch (error) {
-console.error("FCM notification error:", error);
-
-
-return NextResponse.json(
-  {
-    success: false,
-    message: error.message || "Failed to send notification",
-  },
-  { status: 500 }
-);
-
-
-}
 }

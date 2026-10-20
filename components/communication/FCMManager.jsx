@@ -1,340 +1,142 @@
 
 "use client";
 
-import {
-  useContext,
-  useEffect,
-} from "react";
+import { useContext, useEffect } from "react";
+import { getToken, onMessage } from "firebase/messaging";
+import { useRouter } from "next/navigation";
+import { getFirebaseMessaging } from "@/lib/firebase";
+import { MyContext } from "@/components/myContext/MyContext";
 
-import {
-  getToken,
-  onMessage,
-} from "firebase/messaging";
-
-import {
-  getFirebaseMessaging,
-} from "@/lib/firebase";
-
-import {
-  MyContext,
-} from "@/components/myContext/MyContext";
-
-export default function FCMManager({
-  children,
-}) {
-  const {
-    increaseUnreadCount,
-  } = useContext(MyContext);
+export default function FCMManager({ children }) {
+  const { increaseUnreadCount } = useContext(MyContext);
+  const router = useRouter();
 
   useEffect(() => {
+    let cancelled = false;
     let unsubscribeMessage = null;
 
-    let isMounted = true;
-
-    const initializeFCM = async () => {
+    async function initializeFCM() {
       try {
-        // =================================================
-        // 1. GET CURRENT USER
-        // =================================================
-
-        const userId =
-          localStorage.getItem("userId");
-
-        if (!userId) {
-          console.log(
-            "No userId found. FCM initialization skipped."
-          );
-
-          return;
-        }
-
-        // =================================================
-        // 2. CHECK BROWSER SUPPORT
-        // =================================================
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
         if (
-          typeof window === "undefined" ||
           !("Notification" in window) ||
           !("serviceWorker" in navigator)
         ) {
-          console.log(
-            "FCM is not supported in this browser."
-          );
-
+          console.info("Browser push notifications are not supported.");
           return;
         }
 
-        // =================================================
-        // 3. CHECK NOTIFICATION PERMISSION
-        // =================================================
-
-        let permission =
-          Notification.permission;
+        // Request permission only when it has not already been decided.
+        let permission = Notification.permission;
 
         if (permission === "default") {
-          permission =
-            await Notification.requestPermission();
+          permission = await Notification.requestPermission();
         }
 
-        if (permission !== "granted") {
-          console.log(
-            "Notification permission was not granted."
-          );
+        if (permission !== "granted" || cancelled) return;
 
-          return;
-        }
+        const messaging = await getFirebaseMessaging();
+        if (!messaging || cancelled) return;
 
-        // =================================================
-        // 4. GET FIREBASE MESSAGING
-        // =================================================
+        await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+        const registration = await navigator.serviceWorker.ready;
 
-        const messaging =
-          await getFirebaseMessaging();
-
-        if (!messaging) {
-          console.log(
-            "Firebase Messaging is unavailable."
-          );
-
-          return;
-        }
-
-        // =================================================
-        // 5. REGISTER FIREBASE SERVICE WORKER
-        // =================================================
-
-        console.log(
-          "Registering Firebase service worker..."
-        );
-
-        const registration =
-          await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
-          );
-
-        console.log(
-          "Firebase service worker registered:",
-          registration
-        );
-
-        // =================================================
-        // 6. WAIT UNTIL SERVICE WORKER IS ACTIVE
-        // =================================================
-
-        console.log(
-          "Waiting for Firebase service worker to become active..."
-        );
-
-        const readyRegistration =
-          await navigator.serviceWorker.ready;
-
-        if (!readyRegistration) {
-          console.error(
-            "Firebase service worker is not ready."
-          );
-
-          return;
-        }
-
-        console.log(
-          "Firebase service worker is active:",
-          readyRegistration.active
-        );
-
-        // =================================================
-        // CHECK COMPONENT IS STILL MOUNTED
-        // =================================================
-
-        if (!isMounted) {
-          return;
-        }
-
-        // =================================================
-        // 7. GET VAPID KEY
-        // =================================================
-
-        const vapidKey =
-          process.env
-            .NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-
+        const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
         if (!vapidKey) {
-          console.error(
-            "NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing."
-          );
-
+          console.error("NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing.");
           return;
         }
 
-        // =================================================
-        // 8. GET FCM TOKEN
-        // =================================================
+        const token = await getToken(messaging, {
+          vapidKey,
+          serviceWorkerRegistration: registration,
+        });
 
-        console.log(
-          "Requesting FCM token..."
-        );
+        if (!token || cancelled) return;
 
-        const token =
-          await getToken(
-            messaging,
-            {
-              vapidKey,
+        const response = await fetch("/api/fcm-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, fcmToken: token }),
+        });
 
-              serviceWorkerRegistration:
-                readyRegistration,
-            }
-          );
+        const result = await response.json();
 
-        if (!token) {
-          console.log(
-            "FCM token was not generated."
-          );
-
-          return;
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "Could not save FCM token.");
         }
 
-        console.log(
-          "FCM token received:",
-          token
-        );
+        unsubscribeMessage = onMessage(messaging, (payload) => {
+          if (cancelled) return;
 
-        // =================================================
-        // 9. SAVE TOKEN TO DATABASE
-        // =================================================
+          const data = payload.data || {};
+          const type = data.type || "message";
+          const senderId = data.senderId;
+          const receiverId = data.receiverId;
 
-        const response =
-          await fetch(
-            "/api/fcm-token",
-            {
-              method: "POST",
+          if (receiverId && String(receiverId) !== String(userId)) return;
 
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
+          // Update unread count for incoming chat messages.
+          if (type === "message" && senderId) {
+            increaseUnreadCount(String(senderId), 1);
+          }
 
-              body: JSON.stringify({
-                userId,
+          // Foreground messages do not automatically show a system notification.
+          // The page is already open, so show one explicitly.
+          const title =
+            data.title ||
+            payload.notification?.title ||
+            (type === "call" ? "Incoming call" : "New message");
 
-                fcmToken:
-                  token,
-              }),
-            }
-          );
+          const body =
+            data.body ||
+            payload.notification?.body ||
+            (type === "call" ? "Someone is calling you." : "You received a message.");
 
-        const data =
-          await response.json();
+          if (Notification.permission === "granted") {
+            const notification = new Notification(title, {
+              body,
+              icon: "/default.png",
+              tag: data.callID || data.messageId || `fcm-${Date.now()}`,
+            });
 
-        if (
-          !response.ok ||
-          !data.success
-        ) {
-          console.error(
-            "Failed to save FCM token:",
-            data
-          );
+            notification.onclick = () => {
+              window.focus();
 
-          return;
-        }
+              if (type === "message" && senderId) {
+                router.push(`/match?messageUserId=${encodeURIComponent(senderId)}`);
+              } else if (type === "call") {
+                const params = new URLSearchParams({
+                  incomingCall: "1",
+                  ...(data.callerId ? { callerId: data.callerId } : {}),
+                  ...(data.callType ? { callType: data.callType } : {}),
+                  ...(data.roomId ? { roomId: data.roomId } : {}),
+                  ...(data.callID ? { callID: data.callID } : {}),
+                });
 
-        console.log(
-          "FCM token saved successfully."
-        );
-
-        // =================================================
-        // 10. FOREGROUND MESSAGE LISTENER
-        // =================================================
-
-        unsubscribeMessage =
-          onMessage(
-            messaging,
-            (payload) => {
-              console.log(
-                "Foreground FCM message:",
-                payload
-              );
-
-              const senderId =
-                payload.data?.senderId;
-
-              const receiverId =
-                payload.data?.receiverId;
-
-              const messageId =
-                payload.data?.messageId;
-
-              const messageText =
-                payload.notification?.body ||
-                payload.data?.message ||
-                "New message";
-
-              // -------------------------------------------
-              // Ignore invalid messages
-              // -------------------------------------------
-
-              if (!senderId) {
-                return;
+                router.push(`/match?${params.toString()}`);
               }
+            };
+          }
+        });
 
-              // -------------------------------------------
-              // Make sure notification belongs to user
-              // -------------------------------------------
-
-              if (
-                receiverId &&
-                receiverId.toString() !==
-                  userId.toString()
-              ) {
-                return;
-              }
-
-              // -------------------------------------------
-              // Increase unread count
-              // -------------------------------------------
-
-              increaseUnreadCount(
-                senderId,
-                1
-              );
-
-              console.log(
-                "Foreground FCM message received:",
-                {
-                  senderId,
-                  receiverId,
-                  messageId,
-                  messageText,
-                }
-              );
-            }
-          );
-
-        console.log(
-          "FCM initialization completed successfully."
-        );
+        console.info("FCM initialization completed.");
       } catch (error) {
-        console.error(
-          "FCM initialization failed:",
-          error
-        );
+        if (!cancelled) {
+          console.error("FCM initialization failed:", error);
+        }
       }
-    };
+    }
 
     initializeFCM();
 
-    // =================================================
-    // CLEANUP
-    // =================================================
-
     return () => {
-      isMounted = false;
-
-      if (unsubscribeMessage) {
-        unsubscribeMessage();
-
-        unsubscribeMessage = null;
-      }
+      cancelled = true;
+      if (unsubscribeMessage) unsubscribeMessage();
     };
-  }, [increaseUnreadCount]);
+  }, [increaseUnreadCount, router]);
 
   return children;
 }

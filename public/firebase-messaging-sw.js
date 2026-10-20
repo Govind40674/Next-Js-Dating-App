@@ -1,156 +1,77 @@
 
-/* global importScripts, firebase */
-
-// =====================================================
-// FIREBASE COMPAT SDK
-// =====================================================
-
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"
-);
-
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"
-);
-
-// =====================================================
-// FIREBASE INITIALIZATION
-// =====================================================
+importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "AIzaSyB8Dk5p04ZFE252IFm-aQ1wal5AnbRJ6KM",
-  authDomain: "datingapp-8f56f.firebaseapp.com",
-  projectId: "datingapp-8f56f",
-  storageBucket: "datingapp-8f56f.firebasestorage.app",
-  messagingSenderId: "981511900281",
-  appId: "1:981511900281:web:2a7cc4d0b5b372fdcc98a8",
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
+  projectId: "YOUR_FIREBASE_PROJECT_ID",
+  storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_APP_ID",
 });
-
-// =====================================================
-// FIREBASE MESSAGING
-// =====================================================
 
 const messaging = firebase.messaging();
 
-// =====================================================
-// BACKGROUND MESSAGE
-// =====================================================
-
 messaging.onBackgroundMessage((payload) => {
-  console.log("Background FCM message:", payload);
+  const data = payload.data || {};
+  const title = data.title || payload.notification?.title || "New notification";
+  const body = data.body || payload.notification?.body || "You have a new notification";
 
-  const notificationTitle =
-    payload.notification?.title || "New message";
-
-  const notificationBody =
-    payload.notification?.body ||
-    payload.data?.message ||
-    "You received a new message.";
-
-  const senderId =
-    payload.data?.senderId || "";
-
-  const receiverId =
-    payload.data?.receiverId || "";
-
-  const messageId =
-    payload.data?.messageId || "";
-
-  const notificationData = {
-    type:
-      payload.data?.type ||
-      "message",
-
-    senderId,
-    receiverId,
-    messageId,
+  const options = {
+    body,
+    icon: "/default.png",
+    data: {
+      url: data.url || "/match",
+      type: data.type || "message",
+      senderId: data.senderId || "",
+      callerId: data.callerId || "",
+      callType: data.callType || "",
+      roomId: data.roomId || "",
+      callID: data.callID || "",
+    },
+    tag: data.callID || data.messageId || `${data.type || "notification"}-${Date.now()}`,
+    renotify: false,
   };
 
-  self.registration.showNotification(
-    notificationTitle,
-    {
-      body: notificationBody,
-
-      icon: "/icon.png",
-
-      data: notificationData,
-    }
-  );
+  return self.registration.showNotification(title, options);
 });
 
-// =====================================================
-// NOTIFICATION CLICK
-// =====================================================
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
 
-self.addEventListener(
-  "notificationclick",
-  (event) => {
-    console.log(
-      "Notification clicked:",
-      event.notification
-    );
+  const data = event.notification.data || {};
+  const url = new URL(data.url || "/match", self.location.origin);
 
-    event.notification.close();
+  if (data.type === "message" && data.senderId) {
+    url.pathname = "/match";
+    url.searchParams.set("messageUserId", data.senderId);
+  }
 
-    const data =
-      event.notification.data || {};
+  if (data.type === "call") {
+    url.pathname = "/match";
+    url.searchParams.set("incomingCall", "1");
 
-    const senderId =
-      data.senderId;
+    if (data.callerId) url.searchParams.set("callerId", data.callerId);
+    if (data.callType) url.searchParams.set("callType", data.callType);
+    if (data.roomId) url.searchParams.set("roomId", data.roomId);
+    if (data.callID) url.searchParams.set("callID", data.callID);
+  }
 
-    // =================================================
-    // NO SENDER ID
-    // =================================================
+  event.waitUntil((async () => {
+    const targetUrl = url.href;
+    const windows = await self.clients.matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    });
 
-    if (!senderId) {
-      event.waitUntil(
-        clients.openWindow("/match")
-      );
-
-      return;
+    for (const client of windows) {
+      if (new URL(client.url).origin === self.location.origin) {
+        await client.navigate(targetUrl);
+        return client.focus();
+      }
     }
 
-    // =================================================
-    // OPEN CHAT
-    // =================================================
-
-    const url =
-      `/match?messageUserId=${encodeURIComponent(
-        senderId
-      )}`;
-
-    event.waitUntil(
-      clients
-        .matchAll({
-          type: "window",
-          includeUncontrolled: true,
-        })
-        .then((clientList) => {
-          // -------------------------------------------
-          // WEBSITE ALREADY OPEN
-          // -------------------------------------------
-
-          for (const client of clientList) {
-            if (
-              "navigate" in client &&
-              "focus" in client
-            ) {
-              return client
-                .navigate(url)
-                .then(() => client.focus());
-            }
-          }
-
-          // -------------------------------------------
-          // WEBSITE NOT OPEN
-          // -------------------------------------------
-
-          if (clients.openWindow) {
-            return clients.openWindow(url);
-          }
-
-          return undefined;
-        })
-    );
-  }
-);
+    return self.clients.openWindow(targetUrl);
+  })());
+});
