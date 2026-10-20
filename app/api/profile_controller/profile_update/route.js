@@ -6,6 +6,7 @@ import User from "@/models/User";
 import cloudinary from "@/lib/cloudinary";
 
 const MAX_PHOTOS = 6;
+const MIN_PHOTOS = 3;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_GENDERS = ["Male", "Female", "Other"];
 const ALLOWED_GENDER_PREFERENCES = ["Male", "Female", "All"];
@@ -162,7 +163,7 @@ function calculateProfileProgress(user) {
     hasDatingPreferences,
     hasPersonality,
     hasLifestyle,
-    Boolean(user.photo?.some(Boolean)),
+    (user.photo?.filter(Boolean).length ?? 0) >= MIN_PHOTOS,
   ];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }
@@ -360,7 +361,7 @@ export async function POST(request) {
       );
     user.height = height;
 
-    // Photos are optional. If a photo payload is sent, rebuild the six slots in submitted order.
+    // At least three profile photos are required. If a photo payload is sent, rebuild the six slots in submitted order.
     // Only URLs already attached to this account are accepted as existing photos.
     const hasPhotoPayload =
       formData.has("photosIncluded") ||
@@ -421,14 +422,26 @@ export async function POST(request) {
       user.photo = pictures.filter(Boolean);
     }
 
-    // Completion means Basic Info is completed, not that every optional section is filled.
+    const finalPhotoCount = user.photo?.filter(Boolean).length ?? 0;
+    if (finalPhotoCount < MIN_PHOTOS) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Please upload at least ${MIN_PHOTOS} profile photos.`,
+        },
+        { status: 400 },
+      );
+    }
+
+    // Only Basic Info and the minimum photo count are required; every other section is optional.
     user.isProfileComplete = Boolean(
       user.name &&
       user.dateOfBirth &&
       user.age >= 18 &&
       user.gender &&
       user.genderLike &&
-      user.bio,
+      user.bio &&
+      finalPhotoCount >= MIN_PHOTOS,
     );
     user.profileCompletionPercentage = calculateProfileProgress(user);
     user.lastActive = new Date();
