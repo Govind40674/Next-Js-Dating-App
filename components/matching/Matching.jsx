@@ -9,13 +9,14 @@ import {MyContext} from "../myContext/MyContext";
 import PrivateMessage from "../message/PrivateMessage";
 import OtherProfile from "../otherProfile/OtherProfile";
 import ProfileCmpln from "../profileCmpln/ProfileCmpln";
+import OwnProfile from "../ownProfile/OwnProfile";
 
 
 // import PrivateMessage from "../private-message/PrivateMessage";
 
 
 const Matching = () => {
-  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditpage} = useContext(MyContext);
+  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditpage,isProfilepage} = useContext(MyContext);
   if(isMessageBox) {
     
      return <PrivateMessage messageUserId={messageUserId}/>
@@ -26,6 +27,9 @@ const Matching = () => {
   }
   if(isEditpage){
     return <ProfileCmpln/>
+  }
+  if(isProfilepage){
+    return <OwnProfile/>
   }
 
   return <Matching_profile />;
