@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useContext, useEffect } from "react";
@@ -20,10 +19,7 @@ export default function FCMManager({ children }) {
         const userId = localStorage.getItem("userId");
         if (!userId) return;
 
-        if (
-          !("Notification" in window) ||
-          !("serviceWorker" in navigator)
-        ) {
+        if (!("Notification" in window) || !("serviceWorker" in navigator)) {
           console.info("Browser push notifications are not supported.");
           return;
         }
@@ -40,19 +36,52 @@ export default function FCMManager({ children }) {
         const messaging = await getFirebaseMessaging();
         if (!messaging || cancelled) return;
 
-        await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-        const registration = await navigator.serviceWorker.ready;
+        // await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+        // const registration = await navigator.serviceWorker.ready;
+
+        // const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+        // if (!vapidKey) {
+        //   console.error("NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing.");
+        //   return;
+        // }
+
+        // const token = await getToken(messaging, {
+        //   vapidKey,
+        //   serviceWorkerRegistration: registration,
+        // });
+
+        const registration = await navigator.serviceWorker.register(
+          "/firebase-messaging-sw.js",
+          { updateViaCache: "none" },
+        );
+
+        await navigator.serviceWorker.ready;
+
+        if (cancelled) return;
 
         const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+
         if (!vapidKey) {
-          console.error("NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing.");
-          return;
+          throw new Error("NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing.");
         }
+
+        if (!registration.active) {
+          throw new Error("Firebase messaging service worker is not active.");
+        }
+
+        console.info("[FCM] Service worker:", registration.active.scriptURL);
 
         const token = await getToken(messaging, {
           vapidKey,
           serviceWorkerRegistration: registration,
         });
+
+        if (!token || cancelled) {
+          console.error("[FCM] No valid token was obtained.");
+          return;
+        }
+
+        console.info("[FCM] Token obtained:", Boolean(token));
 
         if (!token || cancelled) return;
 
@@ -93,7 +122,9 @@ export default function FCMManager({ children }) {
           const body =
             data.body ||
             payload.notification?.body ||
-            (type === "call" ? "Someone is calling you." : "You received a message.");
+            (type === "call"
+              ? "Someone is calling you."
+              : "You received a message.");
 
           if (Notification.permission === "granted") {
             const notification = new Notification(title, {
@@ -106,7 +137,9 @@ export default function FCMManager({ children }) {
               window.focus();
 
               if (type === "message" && senderId) {
-                router.push(`/match?messageUserId=${encodeURIComponent(senderId)}`);
+                router.push(
+                  `/match?messageUserId=${encodeURIComponent(senderId)}`,
+                );
               } else if (type === "call") {
                 const params = new URLSearchParams({
                   incomingCall: "1",
