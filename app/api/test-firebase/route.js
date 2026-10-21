@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { adminMessaging } from "@/lib/firebase-admin";
+// import { adminMessaging } from "@/lib/firebase-admin";
+import { getAdminMessaging } from "@/lib/firebase-admin";
 
 export async function GET() {
 try {
 console.log(
 "Firebase Messaging initialized:",
-Boolean(adminMessaging)
+Boolean(getAdminMessaging())
 );
 
 

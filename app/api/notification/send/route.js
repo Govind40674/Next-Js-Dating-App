@@ -1,7 +1,8 @@
 
 import connectDB from "@/lib/connectDB";
 import User from "@/models/User";
-import { adminMessaging } from "@/lib/firebase-admin";
+// import { adminMessaging } from "@/lib/firebase-admin";
+import { getAdminMessaging } from "@/lib/firebase-admin";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
@@ -58,7 +59,7 @@ export async function POST(request) {
     const title = `${safeCallerName} is calling you`;
     const body = `Incoming ${callType} call`;
 
-    const messageId = await adminMessaging.send({
+    const messageId = await getAdminMessaging().send({
       token: receiver.fcmToken,
       data: {
         type: "call",
