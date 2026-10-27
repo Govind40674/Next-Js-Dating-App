@@ -1,6 +1,18 @@
+import mongoose from "mongoose";
+import { NextResponse } from "next/server";
+
 import connectDB from "@/lib/connectDB";
 import User from "@/models/User";
-import { NextResponse } from "next/server";
+
+const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+const containsId = (array, id) =>
+  Array.isArray(array) && array.some((value) => String(value) === String(id));
+
+const removeId = (array, id) =>
+  (Array.isArray(array) ? array : []).filter(
+    (value) => String(value) !== String(id)
+  );
 
 export async function POST(request) {
   try {
@@ -8,14 +20,22 @@ export async function POST(request) {
 
     const { userId, targetUserId } = await request.json();
 
-    // Correct validation
-    if (!userId || !targetUserId) {
+    if (
+      !userId ||
+      !targetUserId ||
+      !mongoose.Types.ObjectId.isValid(userId) ||
+      !mongoose.Types.ObjectId.isValid(targetUserId)
+    ) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "User ID and Target User ID are required",
-        },
-        { status: 400 },
+        { success: false, message: "Valid user ID and target user ID are required." },
+        { status: 400 }
+      );
+    }
+
+    if (String(userId) === String(targetUserId)) {
+      return NextResponse.json(
+        { success: false, message: "You cannot like your own profile." },
+        { status: 400 }
       );
     }
 
@@ -24,78 +44,54 @@ export async function POST(request) {
 
     if (!user || !targetUser) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "User or target user not found",
-        },
-        { status: 404 },
+        { success: false, message: "User or target user not found." },
+        { status: 404 }
       );
     }
 
-    // --------------------------------
-    // Check 24-hour period
-    // --------------------------------
-
+    // Reset the free-view counter after 24 hours.
     const now = Date.now();
-    const start = user.startTime.getTime();
+    const startTime = user.startTime ? new Date(user.startTime).getTime() : now;
 
-    const difference = now - start;
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-
-    if (difference >= twentyFourHours) {
-      console.log("24 hours completed");
-
+    if (!Number.isFinite(startTime) || now - startTime >= TWENTY_FOUR_HOURS) {
       user.todayViewCount = 0;
-      user.startTime = now;
+      user.startTime = new Date(now);
     }
 
-    // --------------------------------
-    // Increase today's view count
-    // --------------------------------
+    user.todayViewCount = Number(user.todayViewCount || 0) + 1;
 
-    user.todayViewCount += 1;
+    // Record the current user's like and the recipient's incoming-like list.
+    if (!containsId(user.LikedMe, targetUserId)) user.LikedMe.push(String(targetUserId));
+    if (!containsId(targetUser.LikedBy, userId)) targetUser.LikedBy.push(String(userId));
 
-    // --------------------------------
-    // Save like information
-    // --------------------------------
+    // A reciprocal like can be either a normal like or a pending Star Like.
+    const targetAlreadyLiked = containsId(targetUser.LikedMe, userId);
+    const targetAlreadyStarLiked = containsId(targetUser.starLike, userId);
+    const matched = targetAlreadyLiked || targetAlreadyStarLiked;
 
-    // A likes B
+    if (matched) {
+      if (!containsId(user.LikedBoth, targetUserId)) user.LikedBoth.push(String(targetUserId));
+      if (!containsId(targetUser.LikedBoth, userId)) targetUser.LikedBoth.push(String(userId));
 
-    if (!user.LikedMe.includes(targetUserId)) {
-      user.LikedMe.push(targetUserId);
+      // A reciprocal action has dealt with the pending Star Like; remove it
+      // from the sender's outgoing Star Like list.
+      targetUser.starLike = removeId(targetUser.starLike, userId);
+      user.starLike = removeId(user.starLike, targetUserId);
     }
 
-    if (!targetUser.LikedBy.includes(userId)) {
-      targetUser.LikedBy.push(userId);
-    }
-
-    // Check if B had already liked A
-    if (targetUser.LikedMe.includes(userId)) {
-      if (!user.LikedBoth.includes(targetUserId)) {
-        user.LikedBoth.push(targetUserId);
-      }
-
-      if (!targetUser.LikedBoth.includes(userId)) {
-        targetUser.LikedBoth.push(userId);
-      }
-    }
-
-    await user.save();
-    await targetUser.save();
+    await Promise.all([user.save(), targetUser.save()]);
 
     return NextResponse.json({
       success: true,
+      matched,
       todayViewCount: user.todayViewCount,
+      message: matched ? "It's a match!" : "Like saved.",
     });
   } catch (error) {
     console.error("Like-match error:", error);
-
     return NextResponse.json(
-      {
-        success: false,
-        message: "Something went wrong",
-      },
-      { status: 500 },
+      { success: false, message: "Something went wrong while liking this profile." },
+      { status: 500 }
     );
   }
 }

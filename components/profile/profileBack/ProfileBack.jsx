@@ -6,6 +6,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { setOnlineStatus } from "@/lib/presence";
 import { MyContext } from "../../myContext/MyContext";
+import {HandCoins} from "lucide-react"
 
 const ProfileBack = () => {
   const router = useRouter();
@@ -16,13 +17,15 @@ const ProfileBack = () => {
     setIsMatching,
     setIsEditpage,
     setIsProfilepage,
+    setPaymentKind,
+    setIsPayment,
   } = useContext(MyContext);
 
   const handleLogout = async () => {
     try {
       await setOnlineStatus(false);
     } catch (error) {
-      console.error("Error updating online status:", error);
+      console.log("Error updating online status:", error);
     } finally {
       localStorage.clear();
       router.push("/login");
@@ -35,6 +38,7 @@ const ProfileBack = () => {
     setIsMatching(false);
     setIsEditpage(true);
     setIsProfilepage(false);
+    setIsPayment(false);
   };
 
   const handleOwnProfile = () => {
@@ -43,12 +47,21 @@ const ProfileBack = () => {
     setIsMatching(false);
     setIsEditpage(false);
     setIsProfilepage(true);
+    setIsPayment(false);
+  };
+
+  const handlePayment = (kind) => {
+    setIsMessageBox(false);
+    setIsMatchBox(false);
+    setIsMatching(false);
+    setIsEditpage(false);
+    setIsProfilepage(false);
+    setPaymentKind(kind);
+    setIsPayment(true);
   };
 
   return (
     <section className={styles.profileSection}>
-  
-
       <div className={styles.buttonGroup}>
         <Button
           className={`${styles.button} ${styles.editButton}`}
@@ -65,7 +78,23 @@ const ProfileBack = () => {
           aria-label="View own profile"
         >
           <span className={styles.buttonIcon}>♙</span>
-          <span>Own Profile</span>
+          <span>Profile</span>
+        </Button>
+        <Button
+          className={`${styles.button} ${styles.normalpayment}`}
+          onPress={()=>handlePayment("Classic")}
+          aria-label="View own profile"
+        >
+          <span className={styles.buttonIcon}>Classic Plan</span>
+          <span><HandCoins /></span>
+        </Button>
+        <Button 
+          className={`${styles.button} ${styles.premiumpayment}`}
+          onPress={()=>handlePayment("Prestige")}
+          aria-label="View own profile"
+        >
+          <span className={styles.buttonIcon}>Prestige Plan</span>
+          <span><HandCoins /></span>
         </Button>
 
         <Button

@@ -44,8 +44,10 @@ const GoogleCallback = () => {
         localStorage.setItem("todayViewCount",todayViewCount);
         localStorage.setItem("profile_photo", session.user.image || "");
         localStorage.setItem("name", session.user.name || "");
+        localStorage.setItem("isPremium", session.user.isPremium || "");
         console.log("todayViewCount",localStorage.getItem("todayViewCount"));
         console.log( "isVIP",localStorage.getItem("isVIP"));
+
 
 
         // -----------------------------------------

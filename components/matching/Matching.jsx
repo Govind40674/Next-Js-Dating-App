@@ -10,13 +10,14 @@ import PrivateMessage from "../message/PrivateMessage";
 import OtherProfile from "../otherProfile/OtherProfile";
 import ProfileCmpln from "../profileCmpln/ProfileCmpln";
 import OwnProfile from "../ownProfile/OwnProfile";
+import Razorpayment from "../payment/Razorpayment";
 
 
 // import PrivateMessage from "../private-message/PrivateMessage";
 
 
 const Matching = () => {
-  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditpage,isProfilepage} = useContext(MyContext);
+  const {isMessageBox, messageUserId,isMatchBox, matchUserId, isEditpage,isProfilepage,isPayment,paymentKind} = useContext(MyContext);
   if(isMessageBox) {
     
      return <PrivateMessage messageUserId={messageUserId}/>
@@ -30,6 +31,9 @@ const Matching = () => {
   }
   if(isProfilepage){
     return <OwnProfile/>
+  }
+  if(isPayment){
+    return <Razorpayment kind={paymentKind}/>
   }
 
   return <Matching_profile />;

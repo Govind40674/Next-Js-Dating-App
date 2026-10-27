@@ -116,6 +116,7 @@ const Login = () => {
 
     localStorage.setItem("profile_photo", profilePhoto);
     localStorage.setItem("name", user.name || "");
+    localStorage.setItem("isPremium", String(user.isPremium ?? false));
     
 
   };

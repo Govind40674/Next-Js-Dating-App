@@ -12,7 +12,7 @@ import styles from "./Match.module.css";
 const Match = () => {
   const searchParams = useSearchParams();
 
-  const { setMessageUserId, setIsMessageBox } = useContext(MyContext);
+  const { setMessageUserId, setIsMessageBox,setIsMatching} = useContext(MyContext);
 
   useEffect(() => {
     const messageUserId = searchParams.get("messageUserId");
@@ -20,6 +20,8 @@ const Match = () => {
     if (messageUserId) {
       setMessageUserId(messageUserId);
       setIsMessageBox(true);
+      
+      setIsMatching(false);
     }
   }, [searchParams, setMessageUserId, setIsMessageBox]);
 

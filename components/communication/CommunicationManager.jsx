@@ -80,7 +80,7 @@ export default function CommunicationManager({ children }) {
         );
       }
     }).catch((error) => {
-      console.warn("[ZIM] Could not start outgoing ringback:", error);
+      console.log("[ZIM] Could not start outgoing ringback:", error);
     });
   }, []);
 
@@ -532,7 +532,7 @@ export default function CommunicationManager({ children }) {
 
             if (data?.event === 4) {
 
-              console.warn("[ZIM] Connection was kicked out.");
+              console.log("[ZIM] Connection was kicked out.");
 
             }
 
@@ -861,7 +861,7 @@ export default function CommunicationManager({ children }) {
 
           if (!cancelledCallID) {
 
-            console.warn(
+            console.log(
 
               "[ZIM] Cancellation event has no callID:",
 

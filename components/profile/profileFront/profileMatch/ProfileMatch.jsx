@@ -18,7 +18,9 @@ setIsMessageBox,
 setIsMatchBox,
 setIsMatching,
 setIsEditpage,
-setIsProfilepage
+setIsProfilepage,
+setIsPayment
+
 } = useContext(MyContext);
 
 useEffect(() => {
@@ -81,6 +83,7 @@ setMatchUserId(userId);
 setIsMatchBox(true);
 setIsEditpage(false);
 setIsProfilepage(false);
+setIsPayment(false);
 };
 
 // Wait until the user is available.

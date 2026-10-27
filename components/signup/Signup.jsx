@@ -358,6 +358,7 @@ const Signup = () => {
 
         localStorage.setItem("profile_photo", profilePhoto);
         localStorage.setItem("name", user.name || "");
+        localStorage.setItem("isPremium", String(user.isPremium ?? false));
 
         setMessage("Account created successfully!");
         router.push("/match");

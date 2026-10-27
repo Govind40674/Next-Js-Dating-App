@@ -10,7 +10,9 @@ import { MyContext } from "@/components/myContext/MyContext";
 
 const ProfileHeader = ({ user, setIsFront,isFront}) => {
 
-  const {isMatching, setIsMatching,setIsMatchBox,setIsMessageBox,setIsEditpage,setIsProfilepage} = useContext(MyContext);
+  const {isMatching, setIsMatching,setIsMatchBox,setIsMessageBox,setIsEditpage,setIsProfilepage,
+    setIsPayment
+  } = useContext(MyContext);
 
   const handleClick = () => {
     if(!isMatching){
@@ -19,6 +21,7 @@ const ProfileHeader = ({ user, setIsFront,isFront}) => {
       setIsMessageBox(false);
       setIsEditpage(false);
       setIsProfilepage(false);
+      setIsPayment(false);
       // setIsFront(!isFront);
     }else{
       setIsFront(!isFront);

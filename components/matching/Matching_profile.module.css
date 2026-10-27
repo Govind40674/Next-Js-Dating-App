@@ -21,7 +21,6 @@
   padding: 10px;
 }
 
-
 /* =========================================
    PROFILE WRAPPER
 ========================================= */
@@ -46,7 +45,6 @@
   overflow: hidden;
 }
 
-
 /* =========================================
    PROFILE CARD
 ========================================= */
@@ -70,7 +68,6 @@
     0 10px 35px rgba(0, 0, 0, 0.2);
 }
 
-
 /* =========================================
    IMAGE WRAPPER
 ========================================= */
@@ -91,7 +88,6 @@
   background: #111;
 }
 
-
 /* =========================================
    IMAGE
 ========================================= */
@@ -105,7 +101,6 @@
 
   border-radius: 24px;
 }
-
 
 /* =========================================
    DARK GRADIENT OVER IMAGE
@@ -133,7 +128,6 @@
     transparent
   );
 }
-
 
 /* =========================================
    PHOTO NAVIGATION BUTTONS
@@ -173,7 +167,6 @@
     transform 0.2s ease;
 }
 
-
 .photoNavigation svg {
   width: 30px;
   height: 30px;
@@ -181,18 +174,15 @@
   stroke-width: 2.5;
 }
 
-
 .photoNavigation:hover {
   background: rgba(0, 0, 0, 0.85);
 
   transform: translateY(-50%) scale(1.05);
 }
 
-
 .photoNavigation:active {
   transform: translateY(-50%) scale(0.92);
 }
-
 
 /* =========================================
    LEFT BUTTON
@@ -202,7 +192,6 @@
   left: 14px;
 }
 
-
 /* =========================================
    RIGHT BUTTON
 ========================================= */
@@ -210,7 +199,6 @@
 .next {
   right: 14px;
 }
-
 
 /* =========================================
    PHOTO INDICATORS
@@ -231,7 +219,6 @@
   gap: 5px;
 }
 
-
 .indicator {
   flex: 1;
 
@@ -242,11 +229,9 @@
   background: rgba(255, 255, 255, 0.45);
 }
 
-
 .activeIndicator {
   background: white;
 }
-
 
 /* =========================================
    PROFILE INFORMATION
@@ -265,7 +250,6 @@
   color: white;
 }
 
-
 /* =========================================
    NAME
 ========================================= */
@@ -278,7 +262,6 @@
   gap: 8px;
 }
 
-
 .nameRow h2 {
   margin: 0;
 
@@ -290,7 +273,6 @@
 
   line-height: 1.1;
 }
-
 
 /* =========================================
    LOCATION
@@ -310,12 +292,10 @@
   font-size: 14px;
 }
 
-
 .locationRow svg {
   width: 17px;
   height: 17px;
 }
-
 
 /* =========================================
    NO PHOTO
@@ -337,7 +317,6 @@
   background: #222;
 }
 
-
 /* =========================================
    ACTION BUTTONS
 ========================================= */
@@ -357,7 +336,6 @@
 
   flex-shrink: 0;
 }
-
 
 /* =========================================
    COMMON BUTTON
@@ -397,7 +375,6 @@
   transition: transform 0.2s ease;
 }
 
-
 /* =========================================
    ACTION ICONS
 ========================================= */
@@ -413,7 +390,6 @@
   stroke-width: 2;
 }
 
-
 /* =========================================
    CANCEL
 ========================================= */
@@ -421,7 +397,6 @@
 .cancel {
   color: white !important;
 }
-
 
 /* =========================================
    STAR
@@ -431,7 +406,6 @@
   color: #8db7ff !important;
 }
 
-
 /* =========================================
    HEART
 ========================================= */
@@ -440,7 +414,6 @@
   color: #ff3030 !important;
 }
 
-
 /* =========================================
    SEND
 ========================================= */
@@ -448,7 +421,6 @@
 .send {
   color: #8db7ff !important;
 }
-
 
 /* =========================================
    BUTTON HOVER
@@ -461,7 +433,6 @@
   transform: scale(1.08);
 }
 
-
 /* =========================================
    BUTTON ACTIVE
 ========================================= */
@@ -472,7 +443,6 @@
 .send:active {
   transform: scale(0.92);
 }
-
 
 /* =========================================
    LOADING
@@ -493,7 +463,6 @@
   gap: 15px;
 }
 
-
 .spinner {
   width: 40px;
 
@@ -508,13 +477,11 @@
   animation: spin 0.8s linear infinite;
 }
 
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
-
 
 /* =========================================
    EMPTY
@@ -536,13 +503,11 @@
   color: #333;
 }
 
-
 /* =========================================
    MOBILE
 ========================================= */
 
 @media (max-width: 600px) {
-
   .container {
     padding: 8px;
   }
@@ -612,13 +577,11 @@
   }
 }
 
-
 /* =========================================
    SMALL HEIGHT
 ========================================= */
 
 @media (max-height: 700px) {
-
   .profileWrapper {
     height: calc(100vh - 85px);
 
@@ -642,5 +605,427 @@
     min-width: 48px !important;
 
     min-height: 48px !important;
+  }
+}
+
+/* =========================================
+   ADDED STYLES: VIP / STAR MESSAGE MODALS
+   Original profile styles above are retained.
+========================================= */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  overflow-y: auto;
+}
+
+.modal {
+  position: relative;
+
+  width: min(100%, 440px);
+  max-height: min(88vh, 760px);
+
+  overflow-y: auto;
+
+  padding: 30px;
+  box-sizing: border-box;
+
+  border: 1px solid #e7e7eb;
+  border-radius: 22px;
+
+  background: #ffffff;
+  color: #202124;
+
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+
+  animation: modalAppear 0.18s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalClose {
+  position: absolute;
+
+  top: 12px;
+  right: 14px;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #f3f4f6;
+  color: #444;
+
+  font-size: 26px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.modalClose:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.modalClose:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.modalIcon {
+  width: 56px;
+  height: 56px;
+
+  margin: 0 auto 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: #f1eaff;
+  color: #7040c6;
+}
+
+.modal h2 {
+  margin: 0 28px 12px;
+
+  color: #171717;
+
+  font-size: 25px;
+  font-weight: 750;
+  line-height: 1.25;
+
+  text-align: center;
+}
+
+.modal p {
+  margin: 0 0 18px;
+
+  color: #60616b;
+
+  font-size: 14px;
+  line-height: 1.65;
+
+  text-align: center;
+}
+
+.planFeatureList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 11px;
+
+  margin: 20px 0 24px;
+  padding: 0;
+
+  list-style: none;
+}
+
+.planFeatureList li {
+  position: relative;
+
+  padding-left: 29px;
+
+  color: #34353b;
+
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.planFeatureList li::before {
+  content: "✓";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 19px;
+  height: 19px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e5f8ec;
+  color: #168344;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.primaryModalButton,
+.secondaryModalButton,
+.planLinkButton {
+  width: 100%;
+  min-height: 48px;
+
+  padding: 12px 16px;
+
+  box-sizing: border-box;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.primaryModalButton,
+.planLinkButton {
+  border: 1px solid #6d3ac3;
+
+  background: #7040c6;
+  color: #ffffff;
+}
+
+.primaryModalButton:hover:not(:disabled),
+.planLinkButton:hover {
+  background: #5d30ac;
+
+  transform: translateY(-1px);
+}
+
+.secondaryModalButton {
+  margin-top: 10px;
+
+  border: 1px solid #dedee4;
+
+  background: #ffffff;
+  color: #45454d;
+}
+
+.secondaryModalButton:hover:not(:disabled) {
+  background: #f5f5f7;
+}
+
+.primaryModalButton:disabled,
+.secondaryModalButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.messageLabel {
+  display: block;
+
+  margin: 8px 0;
+
+  color: #33343a;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.messageTextarea {
+  display: block;
+
+  width: 100%;
+  min-height: 125px;
+
+  padding: 12px 13px;
+
+  box-sizing: border-box;
+
+  resize: vertical;
+
+  border: 1px solid #d8d8df;
+  border-radius: 11px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #202124;
+
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.messageTextarea::placeholder {
+  color: #9696a0;
+}
+
+.messageTextarea:focus {
+  border-color: #8051d4;
+
+  box-shadow: 0 0 0 3px rgba(128, 81, 212, 0.13);
+}
+
+.messageTextarea:disabled {
+  background: #f6f6f8;
+
+  cursor: not-allowed;
+}
+
+.characterCount {
+  margin: 7px 2px 16px;
+
+  color: #777781;
+
+  font-size: 12px;
+
+  text-align: right;
+}
+
+/* Supporting styles for UI elements already used in the JSX. */
+
+.starReceivedBadge {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 4px;
+
+  padding: 5px 9px;
+
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+
+  background: rgba(40, 35, 60, 0.78);
+  color: #e5d5ff;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.actionNotice {
+  width: min(100%, 420px);
+
+  margin: 10px auto 0;
+
+  padding: 9px 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e1e1e7;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #33343a;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   MODAL RESPONSIVENESS
+========================================= */
+
+@media (max-width: 600px) {
+  .modalOverlay {
+    align-items: center;
+
+    padding: 14px;
+  }
+
+  .modal {
+    width: 100%;
+
+    max-height: 90vh;
+
+    padding: 26px 20px 20px;
+
+    border-radius: 18px;
+  }
+
+  .modal h2 {
+    font-size: 22px;
+  }
+
+  .modal p,
+  .planFeatureList li {
+    font-size: 13px;
+  }
+
+  .modalIcon {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  .modalOverlay {
+    padding: 10px;
+  }
+
+  .modal {
+    padding: 24px 16px 17px;
+
+    border-radius: 16px;
+  }
+
+  .modal h2 {
+    font-size: 20px;
+  }
+
+  .primaryModalButton,
+  .secondaryModalButton,
+  .planLinkButton {
+    min-height: 45px;
+
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    animation: none;
+  }
+
+  .primaryModalButton,
+  .secondaryModalButton,
+  .planLinkButton {
+    transition: none;
   }
 }

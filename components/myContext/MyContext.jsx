@@ -87,6 +87,10 @@ export const MyContextProvider = ({ children }) => {
 
   const [callState, setCallState] = useState(null);
 
+
+  const [isPayment, setIsPayment] = useState(false);
+  const [paymentKind, setPaymentKind] = useState(null);
+
   // =====================================================
   // INCREASE UNREAD COUNT
   // =====================================================
@@ -499,6 +503,21 @@ export const MyContextProvider = ({ children }) => {
         callState,
         setCallState,
         clearCallState,
+
+        // =================================================
+        // PAYMENT KIND
+        // =================================================
+
+    
+        paymentKind,
+        setPaymentKind,
+        isPayment,
+        setIsPayment,
+
+
+
+
+
       }}
     >
       {children}

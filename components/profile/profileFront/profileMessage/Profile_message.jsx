@@ -17,7 +17,8 @@ const Profile_message = () => {
     setIsMatching,
     setIsMatchBox,
     setIsEditpage,
-    setIsProfilepage
+    setIsProfilepage,
+    setIsPayment
     
   } = useContext(MyContext);
 
@@ -102,6 +103,7 @@ const Profile_message = () => {
     setIsMatchBox(false);
     setIsEditpage(false);
     setIsProfilepage(false);
+    setIsPayment(false);
 
     // Unread count will be cleared by your context / chat logic
     // clearUnreadCount(userId);

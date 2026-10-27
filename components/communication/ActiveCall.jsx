@@ -212,12 +212,17 @@ export default function ActiveCall() {
   const [localProfilePhoto, setLocalProfilePhoto] = useState("/default.png");
 
   useEffect(() => {
-    try {
-      const storedPhoto = localStorage.getItem("profile_photo");
-      if (storedPhoto) setLocalProfilePhoto(storedPhoto);
+    const setphoto=async()=>{
+      try {
+      const storedPhoto = await localStorage.getItem("profile_photo");
+      if (storedPhoto) await setLocalProfilePhoto(storedPhoto);
     } catch (photoError) {
-      console.warn("Could not read the local profile photo:", photoError);
+      console.log("Could not read the local profile photo:", photoError);
     }
+      
+    }
+    setphoto();
+
   }, []);
 
 
@@ -359,7 +364,7 @@ export default function ActiveCall() {
     videoElement.playsInline = true;
 
     void videoElement.play().catch((previewError) => {
-      console.warn("Local camera preview autoplay was blocked:", previewError);
+      console.log("Local camera preview autoplay was blocked:", previewError);
     });
 
     return () => {
@@ -399,7 +404,7 @@ export default function ActiveCall() {
 
     if (activeCallEffectOwner !== null) {
 
-      console.error(
+      console.log(
 
         "[ZEGO] Duplicate ActiveCall detected; refusing a second RTC owner."
 
@@ -426,7 +431,7 @@ export default function ActiveCall() {
 
 
     ownerTokenRef.current = ownerToken;
-
+                
     activeCallEffectOwner = ownerToken;
 
 
@@ -466,7 +471,7 @@ export default function ActiveCall() {
 
 
     let cancelled = false;
-
+      
     let streamUpdateHandler = null;
 
     let publisherStateHandler = null;
@@ -1118,7 +1123,7 @@ export default function ActiveCall() {
 
             await localVideoRef.current.play().catch((previewError) => {
 
-              console.warn(
+              console.log(
 
                 "Local camera preview autoplay was blocked:",
 
@@ -1514,7 +1519,7 @@ export default function ActiveCall() {
         const enabled = await enableRemotePlayback(streamId);
         enabledAny = enabledAny || enabled;
       } catch (playbackError) {
-        console.warn(
+        console.log(
           "[ZEGO] Could not unlock remote playback from a call control:",
           playbackError
         );
@@ -1773,7 +1778,7 @@ export default function ActiveCall() {
 
       ) {
 
-        console.warn(
+        console.log(
 
           "[ZEGO] Ignoring hangup from a non-owning ActiveCall instance."
 

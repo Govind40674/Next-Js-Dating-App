@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import styles from "./OwnProfile.module.css";
+import { MyContext } from "../myContext/MyContext";
 
 const sections = [
   {
@@ -204,11 +205,24 @@ function FieldGrid({ fields }) {
 
 const OwnProfile = () => {
   const router = useRouter();
+  const {
+    setIsMessageBox,
+    setIsMatchBox,
+    setIsMatching,
+    setIsEditpage,
+    setIsProfilepage,
+    setPaymentKind,
+    setIsPayment,
+  } = useContext(MyContext);
 
   const [user, setUser] = useState(null);
+  // Capture the current time when the profile request completes, not during render.
+  const [currentTime, setCurrentTime] = useState(null);
   const [activeSection, setActiveSection] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -243,6 +257,7 @@ const OwnProfile = () => {
 
         if (!cancelled) {
           setUser(response.data.user);
+          setCurrentTime(new Date().getTime());
         }
       } catch (err) {
         console.error("Error fetching own profile:", err);
@@ -272,12 +287,117 @@ const OwnProfile = () => {
     setActiveSection(sectionId);
   };
 
+  const handleEditProfile = () => {
+    setIsMessageBox(false);
+    setIsMatchBox(false);
+    setIsMatching(false);
+    setIsEditpage(true);
+    setIsProfilepage(false);
+    setIsPayment(false);
+  };
+
+  const handleViewVipPlan = (planKind = "Prestige") => {
+    setIsMessageBox(false);
+    setIsMatchBox(false);
+    setIsMatching(false);
+    setIsEditpage(false);
+    setIsProfilepage(false);
+    // Classic and Prestige are the canonical plan identifiers.
+    setPaymentKind(planKind);
+    setIsPayment(true);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deletingAccount) return;
+
+    // First explain the consequences, then require a second explicit confirmation.
+    window.alert(
+      "Deleting your account is permanent. Your profile, messages, payment records, and relationship references will be removed."
+    );
+
+    const confirmed = window.confirm(
+      "Are you absolutely sure you want to permanently delete your account? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    const userId = window.localStorage.getItem("userId");
+    if (!userId) {
+      router.replace("/login");
+      return;
+    }
+
+    try {
+      setDeletingAccount(true);
+      setDeleteError("");
+
+      const response = await axios.delete(
+        "/api/profile_controller/delete-profile",
+        { data: { userId, confirmation: "DELETE" } }
+      );
+
+      if (!response.data?.success) {
+        throw new Error(response.data?.message || "Unable to delete your account.");
+      }
+
+      // Clear app-local account flags after the server confirms deletion.
+      ["userId", "isVIP", "isPremium", "todayViewCount"].forEach((key) => {
+        window.localStorage.removeItem(key);
+      });
+
+      router.replace("/login");
+    } catch (err) {
+      console.error("Error deleting account:", err);
+      setDeleteError(
+        err.response?.data?.message ||
+          err.message ||
+          "Something went wrong while deleting your account. Please try again."
+      );
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
+
   const photos = getPhotos(user);
   const location = getLocation(user);
 
   const interests = Array.isArray(user?.interest)
     ? user.interest
     : [];
+
+  // Show only plans that are active and have not expired.
+  // Aliases keep older saved records visible after plan names were renamed.
+  const savedPlanEntries = Array.isArray(user?.VIP_PLAN) ? user.VIP_PLAN : [];
+
+  const isActivePlan = (plan, displayName) => {
+    const acceptedNames = [displayName];
+    const expiresAt = new Date(plan?.expireDate).getTime();
+
+    return (
+      currentTime !== null &&
+      acceptedNames.includes(plan?.name) &&
+      plan?.isActive === true &&
+      Number.isFinite(expiresAt) &&
+      expiresAt > currentTime
+    );
+  };
+
+  const activePlanNames = ["Classic", "Prestige"].filter((planName) =>
+    savedPlanEntries.some((plan) => isActivePlan(plan, planName))
+  );
+
+  // If both plans are active, open Prestige by default; otherwise open the
+  // active plan. Keep the existing payment flow identifiers unchanged.
+  const activePlanLabel = activePlanNames.length
+    ? activePlanNames.join(" · ")
+    : "No active plan";
+  const activePlanKind = activePlanNames.includes("Prestige")
+    ? "Prestige"
+    : activePlanNames.includes("Classic")
+      ? "Classic"
+      : "Prestige";
+
+
 
   const completionPercentage = Math.min(
     100,
@@ -1005,6 +1125,44 @@ const OwnProfile = () => {
                 : "Profile in progress"}
             </span>
           </header>
+
+          <section className={styles.accountActionBar} aria-label="Account actions">
+            <div className={styles.planSummary}>
+              <div className={styles.planIcon} aria-hidden="true">★</div>
+              <div className={styles.planSummaryText}>
+                <h2 className={styles.planTitle}>{activePlanLabel}</h2>
+              </div>
+            </div>
+
+            <div className={styles.accountActions}>
+              <button
+                type="button"
+                className={styles.vipButton}
+                onClick={() => handleViewVipPlan(activePlanKind)}
+              >
+                <span aria-hidden="true">★</span> View Plan
+              </button>
+              <button
+                type="button"
+                className={styles.editButton}
+                onClick={handleEditProfile}
+              >
+                <span aria-hidden="true">✎</span> Edit Profile
+              </button>
+              <button
+                type="button"
+                className={styles.deleteButton}
+                onClick={handleDeleteAccount}
+                disabled={deletingAccount}
+              >
+                <span aria-hidden="true">⌫</span>{" "}
+                {deletingAccount ? "Deleting Account…" : "Delete Account"}
+              </button>
+            </div>
+            {deleteError && (
+              <p className={styles.deleteError} role="alert">{deleteError}</p>
+            )}
+          </section>
 
           <div className={styles.sectionIntro}>
             <div>

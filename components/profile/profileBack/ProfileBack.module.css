@@ -1,3 +1,4 @@
+
 /* =========================================
    Profile Section
 ========================================= */
@@ -11,8 +12,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-
-  /* background: #000000; */
 }
 
 /* =========================================
@@ -51,7 +50,7 @@
 
   background: #141212;
   color: #f7f7f7;
-  border: 1px solid #1b1919;
+  border: 1px solid #252020;
   border-radius: 16px;
 
   font-family: inherit;
@@ -81,8 +80,14 @@
 
   flex-shrink: 0;
 
-  font-size: 22px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.button :global(svg) {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 /* =========================================
@@ -122,6 +127,60 @@
 }
 
 /* =========================================
+   Normal Payment
+========================================= */
+
+.normalpayment {
+  background: #141212;
+  color: #ffffff;
+  border-color: #252020;
+}
+
+.normalpayment:hover {
+  background: #201b1b;
+  color: #ffffff;
+  border-color: #383030;
+
+  box-shadow: 0 8px 22px rgba(255, 255, 255, 0.045);
+  transform: translateY(-2px);
+}
+
+.normalpayment .buttonIcon {
+  color: #ffffff;
+}
+
+.normalpayment :global(svg) {
+  color: #ffffff;
+}
+
+/* =========================================
+   Premium Payment
+========================================= */
+
+.premiumpayment {
+  background: #141212;
+  color: #ffffff;
+  border-color: #252020;
+}
+
+.premiumpayment:hover {
+  background: #201b1b;
+  color: #ffffff;
+  border-color: #383030;
+
+  box-shadow: 0 8px 22px rgba(255, 255, 255, 0.045);
+  transform: translateY(-2px);
+}
+
+.premiumpayment .buttonIcon {
+  color: #ffffff;
+}
+
+.premiumpayment :global(svg) {
+  color: #ffffff;
+}
+
+/* =========================================
    Logout
 ========================================= */
 
@@ -132,11 +191,11 @@
 }
 
 .logoutButton:hover {
-  background: #2a1719;
-  color: #ffdddd;
-  border-color: #51272b;
+  background: #201b1b;
+  color: #ffffff;
+  border-color: #383030;
 
-  box-shadow: 0 8px 22px rgba(255, 50, 70, 0.08);
+  box-shadow: 0 8px 22px rgba(255, 255, 255, 0.045);
   transform: translateY(-2px);
 }
 
@@ -147,6 +206,12 @@
 .button:focus-visible {
   outline: 2px solid #aaaaaa;
   outline-offset: 3px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* =========================================
@@ -170,7 +235,12 @@
   }
 
   .buttonIcon {
-    font-size: 24px;
+    font-size: 17px;
+  }
+
+  .button :global(svg) {
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -190,6 +260,11 @@
   .button {
     min-height: 62px;
     padding: 16px 18px !important;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+
+  .buttonIcon {
     font-size: 15px;
   }
 }
@@ -218,7 +293,12 @@
   }
 
   .buttonIcon {
-    font-size: 19px;
+    font-size: 14px;
+  }
+
+  .button :global(svg) {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -240,10 +320,16 @@
     padding: 12px !important;
     font-size: 13px;
     border-radius: 11px;
+    gap: 8px;
   }
 
   .buttonIcon {
-    font-size: 18px;
+    font-size: 13px;
+  }
+
+  .button :global(svg) {
+    width: 18px;
+    height: 18px;
   }
 }
 
