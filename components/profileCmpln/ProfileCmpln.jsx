@@ -432,8 +432,18 @@ function dateInputValue(value) {
 }
 
 const ProfileCmpln = () => {
-  const context = useContext(MyContext);
-  const setProfileUpdate = context?.setProfileUpdate;
+  // const context = useContext(MyContext);
+  // const setProfileUpdate = context?.setProfileUpdate;
+  const {
+    setIsMessageBox,
+    setIsMatchBox,
+    setIsMatching,
+    setIsEditpage,
+    setIsProfilepage,
+    setPaymentKind,
+    setIsPayment,
+    setProfileUpdate,
+  } = useContext(MyContext);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
@@ -738,7 +748,17 @@ const ProfileCmpln = () => {
         "profile_photo",
         updatedUser?.photo?.find(Boolean) || "",
       );
-      router.push("/match");
+      const updatepage = async () => {
+        setIsMessageBox(false);
+        setIsMatchBox(false);
+        setIsMatching(false);
+        setIsEditpage(false);
+        setIsProfilepage(true);
+        setIsPayment(false);
+      };
+      updatepage();
+
+      // router.push("/match");
     } catch (error) {
       console.error("Error updating profile:", error.response?.data || error);
       setSubmitError(
