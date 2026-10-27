@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { setOnlineStatus } from "@/lib/presence";
 import { MyContext } from "../../myContext/MyContext";
-import {HandCoins} from "lucide-react"
+import { HandCoins } from "lucide-react";
 
 const ProfileBack = () => {
   const router = useRouter();
@@ -62,6 +62,7 @@ const ProfileBack = () => {
 
   return (
     <section className={styles.profileSection}>
+      {/* Only these buttons scroll */}
       <div className={styles.buttonGroup}>
         <Button
           className={`${styles.button} ${styles.editButton}`}
@@ -80,23 +81,32 @@ const ProfileBack = () => {
           <span className={styles.buttonIcon}>♙</span>
           <span>Profile</span>
         </Button>
+
         <Button
           className={`${styles.button} ${styles.normalpayment}`}
-          onPress={()=>handlePayment("Classic")}
-          aria-label="View own profile"
+          onPress={() => handlePayment("Classic")}
+          aria-label="Select Classic plan"
         >
           <span className={styles.buttonIcon}>Classic Plan</span>
-          <span><HandCoins /></span>
-        </Button>
-        <Button 
-          className={`${styles.button} ${styles.premiumpayment}`}
-          onPress={()=>handlePayment("Prestige")}
-          aria-label="View own profile"
-        >
-          <span className={styles.buttonIcon}>Prestige Plan</span>
-          <span><HandCoins /></span>
+          <span>
+            <HandCoins />
+          </span>
         </Button>
 
+        <Button
+          className={`${styles.button} ${styles.premiumpayment}`}
+          onPress={() => handlePayment("Prestige")}
+          aria-label="Select Prestige plan"
+        >
+          <span className={styles.buttonIcon}>Prestige Plan</span>
+          <span>
+            <HandCoins />
+          </span>
+        </Button>
+      </div>
+
+      {/* This stays at the bottom while the buttons above scroll */}
+      <div className={styles.logoutFooter}>
         <Button
           className={`${styles.button} ${styles.logoutButton}`}
           onPress={handleLogout}
